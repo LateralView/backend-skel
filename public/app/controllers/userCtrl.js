@@ -1,5 +1,5 @@
 angular.module("controllers")
-  .controller("userCreateController", ['User', 'Auth', '$location', 'flash', function(User, Auth, $location, flash) {
+  .controller("userCreateController", ['User', 'Auth', '$location', 'flash', 'config', function(User, Auth, $location, flash, config) {
     var vm = this;
 
     vm.saveUser = function() {
@@ -12,8 +12,7 @@ angular.module("controllers")
             Auth.login(vm.userData.email, vm.userData.password)
               .success(function(data){
                 flash.setMessage("Welcome, " + vm.userData.email + "!");
-                // TODO: Should we have this path in some config file?
-                $location.path("/");
+                $location.path(config.main_path);
               });
           } else
             flash.setErrors(data.errors);
@@ -21,7 +20,7 @@ angular.module("controllers")
     };
   }])
 
-  .controller("userEditController", ['User', '$location', 'flash', function(User, $location, flash) {
+  .controller("userEditController", ['User', '$location', 'flash', 'config', function(User, $location, flash, config) {
     var vm = this;
 
     vm.saveUser = function() {
@@ -32,7 +31,7 @@ angular.module("controllers")
           vm.processing = false;
           if (!data.errors) {
             flash.setMessage(data.message);
-            $location.path("/");
+            $location.path(config.main_path);
           } else
             flash.setErrors(data.errors);
         });

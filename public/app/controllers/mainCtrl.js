@@ -1,5 +1,5 @@
 angular.module("controllers")
-  .controller("mainController", ['$rootScope', '$location', 'Auth', 'User', 'flash', function($rootScope, $location, Auth, User, flash){
+  .controller("mainController", ['$rootScope', '$location', 'Auth', 'User', 'flash', 'config', function($rootScope, $location, Auth, User, flash, config){
     var vm = this;
     vm.loggedIn = Auth.isLoggedIn();
     vm.user = User.getCurrentUser();
@@ -19,9 +19,10 @@ angular.module("controllers")
           vm.processing = false;
 
           if (!data.errors) {
+            console.log(config.main_path);
             flash.setMessage("Welcome back, " + vm.loginData.email + "!");
             $rootScope.currentUser = User.getCurrentUser();
-            $location.path("/apps");
+            $location.path(config.main_path);
           } else
             flash.setErrors(data.errors);
         });
