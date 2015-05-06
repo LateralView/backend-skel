@@ -1,0 +1,27 @@
+<div class="page-header">
+	<h1>Create User</h1>
+</div>
+
+<form class="form-horizontal" ng-submit="createUserForm.$valid && user.saveUser()" name="createUserForm" novalidate>
+	<div class="form-group">
+		<label class="col-sm-2 control-label">Email</label>
+		<div class="col-sm-6">
+			<input type="email" class="form-control" name="email" ng-model="user.userData.email" required>
+			<div ng-show="createUserForm.$submitted" ng-messages="createUserForm.email.$error" ng-messages-include="/app/views/shared/formMessages.html"></div>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label">Password</label>
+		<div class="col-sm-6">
+			<input type="password" class="form-control" name="password" ng-model="user.userData.password" ng-minlength="8" required ng-change="user.errors=null">
+			<div ng-show="createUserForm.$submitted" ng-messages="createUserForm.password.$error" ng-messages-include="/app/views/shared/formMessages.html"></div>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<div class="col-sm-offset-2 col-sm-6">
+			<button type="submit" class="btn btn-success btn-lg btn-block">Save</button>
+		</div>
+	</div>
+</form>
