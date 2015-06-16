@@ -1,5 +1,5 @@
 {
-  "name": "PackedMEAN",
+  "name": "mean-skel",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
@@ -25,7 +25,8 @@
     "jsonwebtoken": "^4.2.2",
     "mongoose": "^4.0.1",
     "morgan": "^1.5.2",
-    "multer": "^0.1.8"
+    "multer": "^0.1.8",
+    "shortid": "^2.2.2"
   },
   "devDependencies": {
     "chai": "^2.2.0",
