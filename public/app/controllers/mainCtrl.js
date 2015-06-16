@@ -1,5 +1,5 @@
 angular.module("controllers")
-  .controller("mainController", ['$location', 'Auth', 'User', 'flash', 'config', function($location, Auth, User, flash, config){
+  .controller("mainController", ['$location', 'Auth', 'flash', 'config', function($location, Auth, flash, config){
     var vm = this;
     vm.auth = Auth;
 

@@ -4,7 +4,7 @@
     <form ng-submit="loginForm.$valid && login.doLogin()" name="loginForm" novalidate>
       <div class="form-group">
         <label>Email</label>
-        <input type="email" class="form-control" ng-model="login.loginData.email" name="email"required>
+        <input type="email" class="form-control" ng-model="login.loginData.email" name="email" required>
         <div ng-show="loginForm.$submitted" ng-messages="loginForm.email.$error" ng-messages-include="/app/views/shared/formMessages.html"></div>
       </div>
 
@@ -14,7 +14,7 @@
         <div ng-show="loginForm.$submitted" ng-messages="loginForm.password.$error" ng-messages-include="/app/views/shared/formMessages.html"></div>
       </div>
 
-      <button type="submit" class="btn btn-block btn-primary">
+      <button type="submit" class="btn btn-block btn-primary" ng-disabled="login.processing">
         <span ng-if="!login.processing">Login</span>
         <span ng-if="login.processing" class="spinner"><span class="glyphicon glyphicon-repeat"></span></span>
       </button>
