@@ -1,5 +1,5 @@
 angular.module("services")
-	.factory("Auth", ['$http', '$window', '$q', 'AuthToken', function($http, $window, $q, AuthToken) {
+	.factory("Auth", ['$http', '$q', 'SessionManager', function($http, $q, SessionManager) {
 		var authFactory = {};
 
 		// login
@@ -9,73 +9,79 @@ angular.module("services")
 				password: password
 			})
 				.success(function(data) {
-					AuthToken.setToken(data.token);
-					// Save user email in local storage
-					$window.localStorage.setItem("email", email);
+					if (!data.errors){
+						SessionManager.createSession(data);
+					}
+
 					return data;
 				});
 		};
 
 		// logout
 		authFactory.logout = function() {
-			AuthToken.setToken(); // Clear the token
-			$window.localStorage.removeItem("email");
+			SessionManager.removeSession();
 		};
 
 		// check if a user is logged in
 		authFactory.isLoggedIn = function() {
-			if (AuthToken.getToken())
+			if (SessionManager.getToken())
 				return true;
 			else
 				return false;
 		};
 
 		// get the user info
-		authFactory.getUser = function() {
-			if (AuthToken.getToken())
-				return $http.get("/api/user");
-			else
-				return $q.reject({ message: "User has no token" });
+		authFactory.getCurrentUser = function() {
+			var currentUser = JSON.parse(SessionManager.getCurrentUser());
+          	return currentUser;
 		};
 
 		return authFactory;
 	}])
 
-	.factory("AuthToken", ['$window', function($window) {
-		var authTokenFactory = {};
+	.factory("SessionManager", ['$window', '$location', function($window, $location) {
+		var sessionManagerFactory = {};
 
 		// get the token out of local storage
-		authTokenFactory.getToken = function() {
+		sessionManagerFactory.getToken = function() {
 			return $window.localStorage.getItem("token");
 		}
 
-		// set the token or clear the token
-		authTokenFactory.setToken = function(token) {
-			if (token)
-				$window.localStorage.setItem("token", token);
-			else
-				$window.localStorage.removeItem("token");
+		// get the current user out of local storage
+		sessionManagerFactory.getCurrentUser = function() {
+			return $window.localStorage.getItem("current_user");
+		}
+
+		// save token and user to local storage
+		sessionManagerFactory.createSession = function(data) {
+			$window.localStorage.setItem("token", data.token);
+			$window.localStorage.setItem("current_user", JSON.stringify(data.user));
 		};
 
-		return authTokenFactory;
+		// remove token and user from local storage
+		sessionManagerFactory.removeSession = function() {
+			$window.localStorage.removeItem("current_user");
+			$window.localStorage.removeItem("token");
+			$location.path("/login");
+		};
+
+		return sessionManagerFactory;
 	}])
 
-	.factory("AuthInterceptor", ['$q', '$location', 'AuthToken', function($q, $location, AuthToken) {
+	.factory("AuthInterceptor", ['$q', 'SessionManager', function($q, SessionManager) {
 		var interceptorFactory = {};
 
 		// attach the token to every request
 		interceptorFactory.request = function(config) {
-			var token = AuthToken.getToken();
+			var token = SessionManager.getToken();
 			if (token) config.headers["x-access-token"] = token;
 			return config;
 		};
 
 		// redirect if a token doesn't authenticate
 		interceptorFactory.responseError = function(response) {
-			if (response.status == 403) {
-				AuthToken.setToken();
-				$location.path("/login");
-			}
+			if (response.status == 403)
+				SessionManager.removeSession();
 
 			return $q.reject(response);
 		};

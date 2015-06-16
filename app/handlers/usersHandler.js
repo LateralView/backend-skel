@@ -31,7 +31,11 @@ function authenticate(req, res){
 
             res.json({
               success: true,
-              token: token
+              token:  token,
+              user: {
+                _id: user._id,
+                email: user.email
+              }
             });
           }
         }

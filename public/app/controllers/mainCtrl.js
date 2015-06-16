@@ -1,15 +1,7 @@
 angular.module("controllers")
-  .controller("mainController", ['$rootScope', '$location', 'Auth', 'User', 'flash', 'config', function($rootScope, $location, Auth, User, flash, config){
+  .controller("mainController", ['$location', 'Auth', 'User', 'flash', 'config', function($location, Auth, User, flash, config){
     var vm = this;
-    vm.loggedIn = Auth.isLoggedIn();
-    vm.user = User.getCurrentUser();
-    $rootScope.flash = flash;
-
-    // detect route change
-    $rootScope.$on("$routeChangeStart", function(){
-      vm.loggedIn = Auth.isLoggedIn();
-      vm.user = User.getCurrentUser();
-    });
+    vm.auth = Auth;
 
     vm.doLogin = function() {
       vm.processing = true;
@@ -19,9 +11,7 @@ angular.module("controllers")
           vm.processing = false;
 
           if (!data.errors) {
-            console.log(config.main_path);
             flash.setMessage("Welcome back, " + vm.loginData.email + "!");
-            $rootScope.currentUser = User.getCurrentUser();
             $location.path(config.main_path);
           } else
             flash.setErrors(data);
@@ -30,7 +20,6 @@ angular.module("controllers")
 
     vm.doLogout = function() {
       Auth.logout();
-      vm.user = {};
-      $location.path("/login");
     };
+
   }]);

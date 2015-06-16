@@ -47,7 +47,7 @@
 
 </head>
 <body ng-app="packedApp" ng-controller="mainController as main">
-  <navbar></navbar>
+  <navbar ng-if="main.auth.isLoggedIn()"></navbar>
   <main class="container">
     <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
     <div ng-view></div>

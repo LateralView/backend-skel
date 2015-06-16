@@ -10,8 +10,4 @@ angular.module("packedApp", ["ngAnimate", "ngMessages", "ui.bootstrap", "angular
 
     // manage error messages
     // $httpProvider.interceptors.push('ResponseInterceptor');
-  }])
-
-  .run(['$rootScope', 'User', function($rootScope, User) {
-      $rootScope.currentUser = User.getCurrentUser();
   }]);
