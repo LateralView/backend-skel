@@ -24,7 +24,7 @@ angular.module("controllers")
             $rootScope.currentUser = User.getCurrentUser();
             $location.path(config.main_path);
           } else
-            flash.setErrors(data.errors);
+            flash.setErrors(data);
         });
     };
 

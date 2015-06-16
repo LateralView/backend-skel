@@ -15,7 +15,7 @@ angular.module("controllers")
                 $location.path(config.main_path);
               });
           } else
-            flash.setErrors(data.errors);
+            flash.setErrors(data);
         });
     };
   }])
@@ -33,7 +33,7 @@ angular.module("controllers")
             flash.setMessage(data.message);
             $location.path(config.main_path);
           } else
-            flash.setErrors(data.errors);
+            flash.setErrors(data);
         });
     };
   }])
