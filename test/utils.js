@@ -1,4 +1,4 @@
-var config = require('../config');
+var config = require('../config').config();
 var mongoose = require('mongoose');
 
 process.env.NODE_ENV = 'test';
@@ -13,7 +13,7 @@ beforeEach(function (done) {
  }
 
  if (mongoose.connection.readyState === 0) {
-   mongoose.connect(config.database.test, function (err) {
+   mongoose.connect(config.database, function (err) {
      if (err) {
        throw err;
      }

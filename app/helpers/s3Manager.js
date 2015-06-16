@@ -1,4 +1,4 @@
-var config = require('../../config'),
+var config = require('../../config').config(),
 		aws = require('aws-sdk'),
 		fs = require('fs');
 

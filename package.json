@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://diego1686@github.com/LateralView/PackedMEAN.git"
+    "url": "https://github.com/LateralView/mean-skel.git"
   },
   "author": "LateralView",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/LateralView/PackedMEAN/issues"
+    "url": "https://github.com/LateralView/mean-skel/issues"
   },
-  "homepage": "https://github.com/LateralView/PackedMEAN",
+  "homepage": "https://github.com/LateralView/mean-skel.git",
   "dependencies": {
     "aws-sdk": "^2.1.23",
     "bcrypt-nodejs": "0.0.3",

@@ -5,7 +5,7 @@ var express = require("express"),
   morgan = require("morgan"),
   mongoose = require("mongoose"),
   jwt = require("jsonwebtoken"),
-  config = require("./config"),
+  config = require("./config").config(),
   path = require("path"),
   routes = require("./app/routes/routes"),
   attachments = require("./app/middleware/attachments");
@@ -31,7 +31,7 @@ app.use(morgan("dev"));
 app.use(attachments.remove);
 
 // database connection
-mongoose.connect(config.database.development);
+mongoose.connect(config.database);
 
 // set static files location
 app.use(express.static(__dirname + "/public"));
