@@ -7,7 +7,7 @@
 		<label class="col-sm-2 control-label">Password</label>
 		<div class="col-sm-6">
 			<input type="password" class="form-control" name="currentPassword" ng-model="user.userData.password" required>
-			<div ng-show="updateUserForm.$submitted" ng-messages="updateUserForm.password.$error" ng-messages-include="/app/views/shared/formMessages.html"></div>
+			<div ng-show="updateUserForm.$submitted" ng-messages="updateUserForm.currentPassword.$error" ng-messages-include="/app/views/shared/formMessages.html"></div>
 		</div>
 	</div>
 
