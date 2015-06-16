@@ -50,5 +50,6 @@ app.get("*", function(req, res){
 });
 
 // ---- START SERVER ----
-app.listen(config.port);
-console.log("Server running on port " + config.port);
+var port = process.env.PORT || 8080;
+app.listen(port);
+console.log("Server running on port " + port);
