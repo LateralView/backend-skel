@@ -6,7 +6,7 @@
 	<div class="form-group">
 		<label class="col-sm-2 control-label">Password</label>
 		<div class="col-sm-6">
-			<input type="password" class="form-control" name="currentPassword" ng-model="user.userData.password" required>
+			<input type="password" class="form-control" name="currentPassword" ng-model="user.userData.password" ng-required="user.userData.new_password">
 			<div ng-show="updateUserForm.$submitted" ng-messages="updateUserForm.currentPassword.$error" ng-messages-include="/app/views/shared/formMessages.html"></div>
 		</div>
 	</div>
@@ -14,8 +14,24 @@
 	<div class="form-group">
 		<label class="col-sm-2 control-label">New Password</label>
 		<div class="col-sm-6">
-			<input type="password" class="form-control" name="newPassword" ng-model="user.userData.new_password" ng-minlength="8" required>
+			<input type="password" class="form-control" name="newPassword" ng-model="user.userData.new_password" ng-minlength="8" ng-required="user.userData.password">
 			<div ng-show="updateUserForm.$submitted" ng-messages="updateUserForm.newPassword.$error" ng-messages-include="/app/views/shared/formMessages.html"></div>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label">First Name</label>
+		<div class="col-sm-6">
+			<input type="text" class="form-control" name="firstname" ng-model="user.userData.firstname" required>
+			<div ng-show="updateUserForm.$submitted" ng-messages="updateUserForm.firstname.$error" ng-messages-include="/app/views/shared/formMessages.html"></div>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label">Last Name</label>
+		<div class="col-sm-6">
+			<input type="text" class="form-control" name="lastname" ng-model="user.userData.lastname" required>
+			<div ng-show="updateUserForm.$submitted" ng-messages="updateUserForm.lastname.$error" ng-messages-include="/app/views/shared/formMessages.html"></div>
 		</div>
 	</div>
 

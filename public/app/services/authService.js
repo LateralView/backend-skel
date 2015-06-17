@@ -12,7 +12,6 @@ angular.module("services")
 					if (!data.errors){
 						SessionManager.createSession(data);
 					}
-
 					return data;
 				});
 		};
@@ -36,6 +35,11 @@ angular.module("services")
           	return currentUser;
 		};
 
+		// update the user info
+		authFactory.updateCurrentUser = function(data) {
+			SessionManager.updateCurrentUser(data);
+		};
+
 		return authFactory;
 	}])
 
@@ -50,6 +54,11 @@ angular.module("services")
 		// get the current user out of local storage
 		sessionManagerFactory.getCurrentUser = function() {
 			return $window.localStorage.getItem("current_user");
+		}
+
+		// updates the current user in the local storage
+		sessionManagerFactory.updateCurrentUser = function(data) {
+			$window.localStorage.setItem("current_user", JSON.stringify(data.user));
 		}
 
 		// save token and user to local storage

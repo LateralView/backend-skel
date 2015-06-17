@@ -10,7 +10,7 @@
         <li><a href="/some-path"><span class="glyphicon glyphicon-user"></span> Some option</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="/user">{{main.auth.getCurrentUser().email}}</a></li>
+        <li><a href="/user">Hello {{main.auth.getCurrentUser().firstname}} {{main.auth.getCurrentUser().lastname}}!</a></li>
         <li><a href="#" ng-click="main.doLogout()">Logout</a></li>
       </ul>
     </div>

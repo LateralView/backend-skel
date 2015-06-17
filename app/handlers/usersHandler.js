@@ -7,7 +7,7 @@ var secret_token = config.secret;
 function authenticate(req, res){
   User
     .findOne({ email: req.body.email })
-    .select("email password active")
+    .select("+password +active")
     .exec(function(err, user){
       if (err) throw err;
       if (!user) {
@@ -28,14 +28,10 @@ function authenticate(req, res){
               _id: user._id,
               email: user.email
             }, secret_token, { expiresInMinutes: 1440 });
-
             res.json({
               success: true,
               token:  token,
-              user: {
-                _id: user._id,
-                email: user.email
-              }
+              user: user.asJson()
             });
           }
         }
@@ -47,6 +43,8 @@ function createUser(req, res){
   var user = new User();
   user.email = req.body.email;
   user.password = req.body.password;
+  user.firstname = req.body.firstname;
+  user.lastname = req.body.lastname;
 
   user.save(function(err){
     if (err) {
@@ -74,9 +72,17 @@ function updateCurrentUser(req, res) {
     user.password = req.body.new_password;
   }
 
+  if (req.body.firstname ){
+    user.firstname = req.body.firstname
+  }
+
+  if (req.body.lastname ){
+    user.lastname = req.body.lastname
+  }
+
   user.save(function(err){
     if (err) return res.send(err);
-    res.json({ message: "User updated!" });
+    res.json({ message: "User updated!", user: user.asJson() });
   });
 }
 

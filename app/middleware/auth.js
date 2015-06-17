@@ -17,7 +17,7 @@ module.exports = function(req, res, next) {
 			} else {
 				// Get user
 				User.findOne({ _id: decoded._id, email: decoded.email, active: true })
-					.select("email password")
+					.select("+password")
 					.exec(function(err, user) {
 					if (err) {
 						return res.status(403).send({

@@ -20,8 +20,14 @@ angular.module("controllers")
     };
   }])
 
-  .controller("userEditController", ['User', '$location', 'flash', 'config', function(User, $location, flash, config) {
+  .controller("userEditController", ['User', 'Auth', '$location', 'flash', 'config', function(User, Auth, $location, flash, config) {
     var vm = this;
+
+    //form population
+    currentUser = Auth.getCurrentUser()
+    vm.userData = {}
+    vm.userData.firstname = currentUser.firstname
+    vm.userData.lastname = currentUser.lastname
 
     vm.saveUser = function() {
       vm.processing = true;
@@ -30,6 +36,7 @@ angular.module("controllers")
         .success(function(data) {
           vm.processing = false;
           if (!data.errors) {
+            Auth.updateCurrentUser(data)
             flash.setMessage(data.message);
             $location.path(config.main_path);
           } else
