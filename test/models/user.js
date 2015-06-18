@@ -44,6 +44,13 @@ describe('User', function () {
       done();
     });
 
+    it('activates their account and deletes the activation token', function (done) {
+      validUser.activateAccount(function(){
+        expect(validUser.active).to.equal(true);
+        done();
+      });
+    });
+
   });
 
   it('is invalid with a taken email', function (done) {

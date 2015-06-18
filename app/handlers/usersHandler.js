@@ -86,6 +86,22 @@ function updateCurrentUser(req, res) {
   });
 }
 
+function activateAccount(req, res) {
+  User.findOne({ activation_token: req.body.activation_token, active: false }, function(err, user) {
+    if (err) return res.send(err);
+
+    if (user)
+      user.activateAccount(function(err){
+        if (err) return res.send(err);
+        return res.json({ message: "Account activated." });
+      });
+    else
+      return res.json({ success: false, message: "Invalid Token",
+                  errors: { user: { message: "Invalid Token."  } } });
+  });
+}
+
 exports.authenticate = authenticate;
 exports.createUser = createUser;
 exports.updateCurrentUser = updateCurrentUser;
+exports.activateAccount = activateAccount;

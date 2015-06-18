@@ -12,5 +12,10 @@ angular.module("services")
 			return $http.put("/api/user/", userData);
 		};
 
+		// activate account
+		userFactory.activateAccount = function(userData) {
+			return $http.post("/api/users/activate/", userData);
+		};
+
 		return userFactory;
 	}]);

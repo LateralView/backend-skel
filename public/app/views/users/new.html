@@ -1,45 +1,36 @@
-<div class="page-header">
-	<h1>Create User</h1>
-</div>
-
-<form class="form-horizontal" ng-submit="createUserForm.$valid && user.saveUser()" name="createUserForm" novalidate>
-	<div class="form-group">
-		<label class="col-sm-2 control-label">Email</label>
-		<div class="col-sm-6">
+<div class="row col-sm-6 col-sm-offset-3">
+  <div class="jumbotron">
+    <h1>Sign Up</h1>
+    <form ng-submit="createUserForm.$valid && user.saveUser()" name="createUserForm" novalidate>
+    	<div class="form-group">
+			<label>Email</label>
 			<input type="email" class="form-control" name="email" ng-model="user.userData.email" required>
 			<div ng-show="createUserForm.$submitted" ng-messages="createUserForm.email.$error" ng-messages-include="/app/views/shared/formMessages.html"></div>
 		</div>
-	</div>
 
-	<div class="form-group">
-		<label class="col-sm-2 control-label">Password</label>
-		<div class="col-sm-6">
+		<div class="form-group">
+			<label>Password</label>
 			<input type="password" class="form-control" name="password" ng-model="user.userData.password" ng-minlength="8" required ng-change="user.errors=null">
 			<div ng-show="createUserForm.$submitted" ng-messages="createUserForm.password.$error" ng-messages-include="/app/views/shared/formMessages.html"></div>
 		</div>
-	</div>
 
-	<div class="form-group">
-		<label class="col-sm-2 control-label">First Name</label>
-		<div class="col-sm-6">
+		<div class="form-group">
+			<label>First Name</label>
 			<input type="text" class="form-control" name="firstname" ng-model="user.userData.firstname" required>
 			<div ng-show="createUserForm.$submitted" ng-messages="createUserForm.firstname.$error" ng-messages-include="/app/views/shared/formMessages.html"></div>
 		</div>
-	</div>
 
-	<div class="form-group">
-		<label class="col-sm-2 control-label">Last Name</label>
-		<div class="col-sm-6">
+		<div class="form-group">
+			<label>Last Name</label>
 			<input type="text" class="form-control" name="lastname" ng-model="user.userData.lastname" required>
 			<div ng-show="createUserForm.$submitted" ng-messages="createUserForm.lastname.$error" ng-messages-include="/app/views/shared/formMessages.html"></div>
 		</div>
-	</div>
 
-	<div class="form-group">
-		<div class="col-sm-offset-2 col-sm-6">
-			<button type="submit" class="btn btn-success btn-lg btn-block" ng-disabled="user.processing">Save</button>
-		</div>
-	</div>
-
-	<a href="/login">Login</a>
-</form>
+	      <button type="submit" class="btn btn-block btn-primary" ng-disabled="user.processing">
+	        <span ng-if="!user.processing">Sign Up</span>
+	        <span ng-if="user.processing" class="spinner"><span class="glyphicon glyphicon-repeat"></span></span>
+	      </button>
+	      <a href="/login">Login</a>
+    </form>
+  </div>
+</div>

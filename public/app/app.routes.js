@@ -35,6 +35,15 @@ angular.module("app.routes", ["ngRoute"])
           }
       })
 
+      .when("/activate/:activation_token", {
+        templateUrl: "app/views/users/activate.html",
+        controller: "userActivationController",
+        controllerAs: "user",
+        resolve: {
+            auth: isAuthenticated
+          }
+      })
+
       .otherwise({
           redirectTo: '/home'
       });
@@ -45,10 +54,10 @@ angular.module("app.routes", ["ngRoute"])
   var isAuthenticated = function($q, Auth, $location, config) {
       var defer = $q.defer();
       if (!Auth.isLoggedIn()) {
-        if ($location.path().indexOf("signup") < 0)
+        if ($location.path().indexOf("signup") < 0 && $location.path().indexOf("activate") < 0)
             $location.path('/login');
       } else {
-        if ($location.path().indexOf("login") > -1 || $location.path().indexOf("signup") > -1)
+        if ($location.path().indexOf("login") > -1 || $location.path().indexOf("signup") > -1 || $location.path().indexOf("activate") > -1)
           $location.path(config.main_path);
       }
       defer.resolve();

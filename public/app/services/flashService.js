@@ -13,13 +13,6 @@ angular.module("services")
       $rootScope.alerts.splice(index, 1);
     };
 
-    // $rootScope.$on("apiError", function(event, errors) {
-    //   if (errors)
-    //     apiErrors = errors;
-    //   else
-    //     apiErrors = null;
-    // });
-
     return {
       setMessage: function(message) {
         queue.push({ type: 'success', msg: message });
@@ -32,20 +25,3 @@ angular.module("services")
       }
     };
   }]);
-
-  // .factory("ResponseInterceptor", ['flash', '$rootScope', function(flash, $rootScope) {
-  //   var interceptorFactory = {};
-
-  //   // check if there're api errors in the response object and handle it.
-  //   interceptorFactory.response = function(response) {
-  //     if (response.data.errors){
-  //       $rootScope.$emit("apiError", response.data.errors);
-  //     } else {
-  //       $rootScope.$emit("apiError");
-  //     }
-
-  //     return response;
-  //   };
-
-  //   return interceptorFactory;
-  // }]);

@@ -16,6 +16,7 @@ function setup(app, handlers) {
 
   // Without authentication
   usersRouter.post("/", handlers.users.createUser);
+  usersRouter.post("/activate", handlers.users.activateAccount);
 
   app.use("/api/users", usersRouter);
 

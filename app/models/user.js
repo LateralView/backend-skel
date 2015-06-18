@@ -61,4 +61,12 @@ UserSchema.methods.asJson = function() {
   return response_user;
 };
 
+UserSchema.methods.activateAccount = function(next) {
+  var user = this;
+  user.active = true;
+  user.save(function(err){
+    next(err);
+  });
+};
+
 module.exports = mongoose.model("User", UserSchema);
