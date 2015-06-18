@@ -1,6 +1,6 @@
 # MEAN skel
 
-Base skeleton to make apps with the MEAN stack. Developed by the [LateralView](https://lateralview.co) team.
+Base skeleton to write apps with the MEAN stack. Developed by the [LateralView](https://lateralview.co) team.
 
 ### Installation
 
