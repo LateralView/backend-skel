@@ -18,17 +18,17 @@
   "homepage": "https://github.com/LateralView/mean-skel.git",
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
-    "body-parser": "^1.12.3",
-    "express": "^4.12.3",
-    "jsonwebtoken": "^4.2.2",
+    "body-parser": "^1.13.1",
+    "express": "^4.12.4",
+    "jsonwebtoken": "^5.0.2",
     "mandrill-api": "^1.0.45",
-    "mongoose": "^4.0.1",
-    "morgan": "^1.5.2",
+    "mongoose": "^4.0.5",
+    "morgan": "^1.6.0",
     "multer": "^0.1.8",
     "shortid": "^2.2.2"
   },
   "devDependencies": {
-    "chai": "^2.2.0",
-    "mocha": "^2.2.4"
+    "chai": "^3.0.0",
+    "mocha": "^2.2.5"
   }
 }
