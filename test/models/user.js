@@ -12,7 +12,9 @@ describe('User', function () {
     beforeEach(function(done){
       var userData = {
         email: "test@test.com",
-        password: password
+        password: password,
+        firstname: "John",
+        lastname: "Doe"
       };
 
       User.create(userData, function (error, user) {
@@ -37,10 +39,10 @@ describe('User', function () {
       done();
     });
 
-    // it('is not active by default', function (done) {
-    //   expect(validUser.active).to.equal(false);
-    //   done();
-    // });
+    it('is not active by default', function (done) {
+      expect(validUser.active).to.equal(false);
+      done();
+    });
 
   });
 
@@ -80,7 +82,7 @@ describe('User', function () {
 
   it('is invalid with a password length less than 8 characters', function (done) {
    	var user = {
-    	email: "test", // invalid email
+    	email: "test@test.com", // invalid email
      	password: "1234567"
    	};
 

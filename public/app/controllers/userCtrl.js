@@ -9,11 +9,8 @@ angular.module("controllers")
         .success(function(data) {
           vm.processing = false;
           if (!data.errors) {
-            Auth.login(vm.userData.email, vm.userData.password)
-              .success(function(data){
-                flash.setMessage("Welcome, " + vm.userData.email + "!");
-                $location.path(config.main_path);
-              });
+            flash.setMessage("Please check your email and follow the activation instructions.");
+            $location.path("/login");
           } else
             flash.setErrors(data);
         });
