@@ -1,7 +1,7 @@
-var config = require('../config').config();
-var mongoose = require('mongoose');
-
 process.env.NODE_ENV = 'test';
+
+var mongoose = require('mongoose');
+var config = require('../config').config();
 
 beforeEach(function (done) {
 
