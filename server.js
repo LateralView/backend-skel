@@ -7,14 +7,12 @@ var express = require("express"),
   jwt = require("jsonwebtoken"),
   config = require("./config").config(),
   path = require("path"),
-  routes = require("./app/routes/routes"),
-  attachments = require("./app/middleware/attachments");
+  routes = require("./app/routes/routes");
 
 // ---- APP CONFIGURATION ----
 
 app.use(bodyParser.json());
 app.use(multer({ dest: './uploads/' }));
-
 
 // handle CORS requests
 app.use(function(req, res, next){
@@ -26,9 +24,6 @@ app.use(function(req, res, next){
 
 // log all requests to the console
 app.use(morgan("dev"));
-
-// remove attachments when request finishes
-app.use(attachments.remove);
 
 // database connection
 mongoose.connect(config.database);
