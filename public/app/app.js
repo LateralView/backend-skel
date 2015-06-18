@@ -7,7 +7,4 @@ angular.module("skelApp", ["ngAnimate", "ngMessages", "ui.bootstrap", "angularFi
   .config([ '$httpProvider', function($httpProvider) {
     // add token to http requests
     $httpProvider.interceptors.push('AuthInterceptor');
-
-    // manage error messages
-    // $httpProvider.interceptors.push('ResponseInterceptor');
   }]);
