@@ -55,7 +55,7 @@ mean-skel
 * **App Folder** -> Backend logic
 * **Public Folder** -> Frontend: Angular app
 * **Test Folder** -> Unit Tests
-* **env.json** -> Backend configuration by environment
+* **env.json** -> Backend configuration depending on the environment
 * **server.js** -> Express server
 
 ### Backend
@@ -94,6 +94,6 @@ var handlers = {
 ```
 
 * **Helpers Folder** -> Shared functions within the backend
-* **Middleware Folder** -> Express middleware. Add new middleware to the Express App in **server.js** or **routes.js**. The **auth.js** file cotains a middleware to authenticate routes from an authentication token. If authentication succeed, it saves the current user in the request object.
-* **Models Folder** -> Mongoose models.
-* **Routes Folder** -> Express routes. 
+* **Middleware Folder** -> Express middleware. Add new middleware to the Express App in **server.js** or **routes.js**. The **auth.js** file cotains a middleware to authenticate routes from the authentication token. If authentication succeeds, it saves the current user in the request object
+* **Models Folder** -> Mongoose models
+* **Routes Folder** -> Express routes 
