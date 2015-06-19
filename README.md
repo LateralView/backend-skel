@@ -12,7 +12,7 @@ $ npm install
 
 ### Configuration
 
-Before running the app, set the database host, base URL and Mandrill API key in the **env.json** file
+Before running the app, set the database host, base URL and Mandrill API key in the **env.json** file. Also, don't forget to run the mongoDB server.
 
 ### Run the App
 
