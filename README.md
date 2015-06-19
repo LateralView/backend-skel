@@ -141,16 +141,16 @@ public
     │   │   │   new.html
     │   │   │   ...
     │   │
-    └───assets
-    │   ├───css
-    │   │   │   style.css
-    │   │   │   ...
-    │   │
-    │   ├───img
-    │   │
-    │   ├───js
-    │   │   │   ui-bootstrap-custom-tpls-0.13.0.min.js
-    │   │   │   ...
+└───assets
+    │───css
+    │   │   style.css
+    │   │   ...
+    │
+    ├───img
+    │
+    ├───js
+    │   │   ui-bootstrap-custom-tpls-0.13.0.min.js
+    │   │   ...
     
 ```
 
