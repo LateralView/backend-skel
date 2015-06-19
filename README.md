@@ -96,4 +96,60 @@ var handlers = {
 * **Helpers Folder** -> Shared functions within the backend
 * **Middleware Folder** -> Express middleware. Add new middleware to the Express App in **server.js** or **routes.js**. The **auth.js** file cotains a middleware to authenticate routes from the authentication token. If authentication succeeds, it saves the current user in the request object
 * **Models Folder** -> Mongoose models
-* **Routes Folder** -> Express routes 
+* **Routes Folder** -> Express routes
+ 
+### Frontend
+
+```
+public
+└───app
+    │   app.config.js
+    │   app.js
+    │   app.routes.js    
+    │
+    ├───controllers
+    │   │   mainCtrl.js
+    │   │   userCtrl.js
+    │   │   ...
+    │
+    └───directives
+    │   │   navbar.js
+    │   │   ...
+    │
+    └───services
+    │   │   authService.js
+    │   │   flashService.js
+    │   │   userService.js
+    │   │   ...
+    │
+    └───views
+    │   │   index.html
+    │
+    │   ├───pages
+    │   │   │   home.html
+    │   │   │   login.html
+    │   │   │   ...
+    │   │
+    │   ├───shared
+    │   │   │   formMessages.html
+    │   │   │   navbar.html
+    │   │   │   ...
+    │   │
+    │   ├───users
+    │   │   │   activate.html
+    │   │   │   edit.html
+    │   │   │   new.html
+    │   │   │   ...
+    │   │
+    └───assets
+    │   ├───css
+    │   │   │   style.css
+    │   │   │   ...
+    │   │
+    │   ├───img
+    │   │
+    │   ├───js
+    │   │   │   ui-bootstrap-custom-tpls-0.13.0.min.js
+    │   │   │   ...
+    
+```
