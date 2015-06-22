@@ -2,6 +2,16 @@
 
 Base skeleton to write apps with the MEAN stack. Developed by the [LateralView](https://lateralview.co) team.
 
+The app allows user sign-up, account activation, login, logout and profile edition. The activation process uses mail confirmation with the Mandrill library. If you don't set the Mandrill API key, you'll see the activation link in the console.
+
+```sh
+...
+GET /favicon.ico 304 2.113 ms - -
+ACTIVATION LINK: http://localhost:8080/activate/E1JpEbZw
+POST /api/users/ 200 388.902 ms - 27
+...
+```
+
 ### Installation
 
 ```sh
