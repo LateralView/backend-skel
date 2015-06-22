@@ -5,6 +5,7 @@ var mandrill_client = new mandrill.Mandrill(config.mandrill.API_KEY);
 function activationEmail(user) {
 	try {
 		var link = config.base_url + "/activate/" + user.activation_token;
+		console.log("ACTIVATION LINK: " + link); // TODO: remove this line
     	var message = {
 		    "html": "<p>Welcome! " + user.email + "</p><p>Please follow this link to activate your account</p><p><a href='" + link + "'>" + link + "</a></p>",
 		    "subject": "Please activate your account!",
