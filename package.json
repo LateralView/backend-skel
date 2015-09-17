@@ -20,6 +20,8 @@
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.13.1",
     "express": "^4.12.4",
+    "grunt": "^0.4.5",
+    "grunt-ng-constant": "^1.1.0",
     "jsonwebtoken": "^5.0.2",
     "mandrill-api": "^1.0.45",
     "mongoose": "^4.0.5",
