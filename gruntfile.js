@@ -1,5 +1,5 @@
 module.exports = function(grunt) {
-  //filter npm module dependencies by name. With this you avoid using grunt.loadNpmTasks(***) for each grunt module
+  //filter npm module dependencies by name. With this you avoid using grunt.loadNpmTasks("grunt-task-name") for each dependency
   require("matchdep").filter("grunt-*").forEach(grunt.loadNpmTasks);
 
   // Project configuration.
