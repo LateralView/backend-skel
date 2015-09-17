@@ -23,6 +23,7 @@
     "grunt": "^0.4.5",
     "grunt-auto-install": "^0.2.4",
     "grunt-ng-constant": "^1.1.0",
+    "matchdep": "*",
     "jsonwebtoken": "^5.0.2",
     "mandrill-api": "^1.0.45",
     "mongoose": "^4.0.5",

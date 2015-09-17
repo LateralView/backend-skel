@@ -1,4 +1,6 @@
 module.exports = function(grunt) {
+  //filter npm module dependencies by name. With this you avoid using grunt.loadNpmTasks(***) for each grunt module
+  require("matchdep").filter("grunt-*").forEach(grunt.loadNpmTasks);
 
   // Project configuration.
   grunt.initConfig({
@@ -56,8 +58,8 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.loadNpmTasks('grunt-ng-constant');
-  grunt.loadNpmTasks('grunt-auto-install');
+  // grunt.loadNpmTasks('grunt-ng-constant');
+  // grunt.loadNpmTasks('grunt-auto-install');
 
   grunt.registerTask('local', function (target) {
     if (target === 'dist') {
