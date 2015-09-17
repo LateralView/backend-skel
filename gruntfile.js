@@ -3,6 +3,9 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    auto_install: {
+      local: {}
+    },
     ngconstant: {
       // Options for all targets
       options: {
@@ -54,6 +57,7 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-ng-constant');
+  grunt.loadNpmTasks('grunt-auto-install');
 
   grunt.registerTask('local', function (target) {
     if (target === 'dist') {
@@ -62,6 +66,7 @@ module.exports = function(grunt) {
 
     grunt.task.run([
       'ngconstant:local',
+      'auto_install'
     ]);
   });
 
