@@ -5,7 +5,7 @@ var jwt = require("jsonwebtoken"),
 var secret_token = config.secret;
 
 /**
- * @api {post} /api/users/authenticate
+ * @api {post} /api/users/authenticate Authenticate user
  * @apiName authenticate
  * @apiGroup users
  *
@@ -75,7 +75,7 @@ function authenticate(req, res){
 }
 
 /**
- * @api {post} /api/users
+ * @api {post} /api/users Register new user
  * @apiName user_create
  * @apiGroup users
  *
@@ -141,7 +141,7 @@ function createUser(req, res){
 }
 
 /**
- * @api {put} /api/users
+ * @api {put} /api/users Update user
  * @apiName user_update
  * @apiGroup users
  *
@@ -214,7 +214,7 @@ function updateCurrentUser(req, res) {
 }
 
 /**
- * @api {post} /api/users/activate
+ * @api {post} /api/users/activate Activate user
  * @apiName user_activate
  * @apiGroup users
  *
