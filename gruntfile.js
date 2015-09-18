@@ -74,9 +74,9 @@ module.exports = function(grunt) {
     }
 
     grunt.task.run([
-      'apidoc',
       'ngconstant:local',
-      'auto_install'
+      'auto_install',
+      'apidoc'
     ]);
   });
 
@@ -87,8 +87,8 @@ module.exports = function(grunt) {
     }
 
     grunt.task.run([
-      'apidoc',
       'ngconstant:development',
+      'apidoc'
       // 'bower-install',
       // 'concurrent:server',
       // 'autoprefixer',
@@ -103,8 +103,8 @@ module.exports = function(grunt) {
     }
 
     grunt.task.run([
-      'apidoc',
-      'ngconstant:staging'
+      'ngconstant:staging',
+      'apidoc'
     ]);
   });
 
@@ -114,8 +114,8 @@ module.exports = function(grunt) {
     }
 
     grunt.task.run([
-      'apidoc',
-      'ngconstant:production'
+      'ngconstant:production',
+      'apidoc'
     ]);
   });
 };
