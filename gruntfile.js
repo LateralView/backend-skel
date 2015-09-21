@@ -1,7 +1,6 @@
 module.exports = function(grunt) {
   //filter npm module dependencies by name. With this you avoid using grunt.loadNpmTasks("grunt-task-name") for each dependency
   require("matchdep").filter("grunt-*").forEach(grunt.loadNpmTasks);
-  grunt.loadNpmTasks('grunt-apidoc');
 
   // Project configuration.
   grunt.initConfig({
@@ -67,6 +66,7 @@ module.exports = function(grunt) {
 
   // grunt.loadNpmTasks('grunt-ng-constant');
   // grunt.loadNpmTasks('grunt-auto-install');
+  // grunt.loadNpmTasks('grunt-apidoc');
 
   grunt.registerTask('local', function (target) {
     if (target === 'dist') {
@@ -88,12 +88,8 @@ module.exports = function(grunt) {
 
     grunt.task.run([
       'ngconstant:development',
+      'auto_install',
       'apidoc'
-      // 'bower-install',
-      // 'concurrent:server',
-      // 'autoprefixer',
-      // 'connect:livereload',
-      // 'watch'
     ]);
   });
 
@@ -104,6 +100,7 @@ module.exports = function(grunt) {
 
     grunt.task.run([
       'ngconstant:staging',
+      'auto_install',
       'apidoc'
     ]);
   });
@@ -115,6 +112,7 @@ module.exports = function(grunt) {
 
     grunt.task.run([
       'ngconstant:production',
+      'auto_install',
       'apidoc'
     ]);
   });
