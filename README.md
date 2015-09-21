@@ -18,7 +18,10 @@ POST /api/users/ 200 388.902 ms - 27
 $ git clone git@github.com:LateralView/mean-skel.git
 $ cd mean-skel
 $ npm install
+$ grunt @ENV
 ```
+
+**@ENV** is the environment where you want to run the app (local | development | staging | production). It allows to create a config file for the frontend depending on the environment. Set the **gruntfile.js** file accordingly
 
 ### Configuration
 
@@ -45,11 +48,12 @@ mean-skel
 │   .gitignore
 │   config.js
 │   env.json
+│   gruntfile.js
 │   package.json
 │   README.md
 │   server.js
 │
-└───app 
+└───app
     │   ...
     │
 └───node-modules
@@ -60,12 +64,16 @@ mean-skel
     │
 └───test
     │   ...
+└───apidoc
+    │   ...
 ```
 
 * **App Folder** -> Backend logic.
 * **Public Folder** -> Frontend: Angular app.
 * **Test Folder** -> Unit Tests.
+* **Apidoc Folder** -> Documentation from API descriptions in the source code. Created when running **grunt @ENV**
 * **env.json** -> Backend configuration depending on the environment.
+* **gruntfile.js** -> Grunt configuration. Run tasks and create config files depending on the environment.
 * **server.js** -> Express server.
 
 ### Backend
@@ -107,7 +115,7 @@ var handlers = {
 * **Middleware Folder** -> Express middleware. Add new middleware to the Express App in **server.js** or **routes.js**. The **auth.js** file cotains a middleware to authenticate routes with the authentication token. If authentication succeeds, it saves the current user in the request object
 * **Models Folder** -> Mongoose models
 * **Routes Folder** -> Express routes
- 
+
 ### Frontend
 
 ```
@@ -115,7 +123,7 @@ public
 └───app
     │   app.config.js
     │   app.js
-    │   app.routes.js    
+    │   app.routes.js
     │
     ├───controllers
     │   │   mainCtrl.js
@@ -161,7 +169,7 @@ public
     ├───js
     │   │   ui-bootstrap-custom-tpls-0.13.0.min.js
     │   │   ...
-    
+
 ```
 
 The Angular app structure is inspired in the rails RESTful organization. The controllers, services, directives and settings modules are initialized and injected in the **app.js** file.
@@ -176,10 +184,10 @@ The Angular app structure is inspired in the rails RESTful organization. The con
         // add token to http requests
         $httpProvider.interceptors.push('AuthInterceptor');
       }]);
-	...
+    ...
     ```
 * The **Flash service** provides two functions: *setMessage* and *setErrors*. **setMessage** shows confirmation alerts after a route change, and **setErrors** shows error alerts in the current scope. It uses the **Alert** directive from [UI Bootstrap](https://angular-ui.github.io/bootstrap/)
- 
+
     *userCtrl.js*
     ```javascript
     ...
@@ -192,10 +200,10 @@ The Angular app structure is inspired in the rails RESTful organization. The con
           } else
             flash.setErrors(data);
         });
-	...
+    ...
     ```
 * In the **app.config.js** file you can set the Angular app settings. i.e.: the main path.
- 
+
     *app.config.js*
     ```javascript
     ...
@@ -204,8 +212,8 @@ The Angular app structure is inspired in the rails RESTful organization. The con
         main_path: "/home"
       });
 
-	...
+    ...
     ```
-    
+
 
 Happy coding!
