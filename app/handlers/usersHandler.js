@@ -178,6 +178,13 @@ function createUser(req, res){
  */
 function updateCurrentUser(req, res) {
   var user = req.current_user;
+  if(req.files.picture) {
+    user.picture = {
+      url: null,
+      path: null,
+      original_file: req.files.picture
+    };
+  }
   if (req.body.password && req.body.new_password) {
     // Check current password
     var validPassword = user.comparePassword(req.body.password);

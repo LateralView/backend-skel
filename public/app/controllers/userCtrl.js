@@ -17,28 +17,43 @@ angular.module("controllers")
     };
   }])
 
-  .controller("userEditController", ['User', 'Auth', '$location', 'flash', 'config', function(User, Auth, $location, flash, config) {
+  .controller("userEditController", ['User', 'Auth', '$location', 'flash', 'config', 'FileUploader', function(User, Auth, $location, flash, config, FileUploader) {
     var vm = this;
+    vm.uploader = new FileUploader({
+      url: config.api_url + "/user"
+    });
 
     //form population
     currentUser = Auth.getCurrentUser();
+    /*
     vm.userData = {};
     vm.userData.firstname = currentUser.firstname;
     vm.userData.lastname = currentUser.lastname;
+    */
+    vm.userData = currentUser;
+    function updateCompleted(data) {
+      vm.processing = false;
+      if (!data.errors) {
+        Auth.updateCurrentUser(data);
+        flash.setMessage(data.message);
+        $location.path(config.main_path);
+      } else
+        flash.setErrors(data);
+    }
 
     vm.saveUser = function() {
       vm.processing = true;
-
-      User.update(vm.userData)
-        .success(function(data) {
-          vm.processing = false;
-          if (!data.errors) {
-            Auth.updateCurrentUser(data);
-            flash.setMessage(data.message);
-            $location.path(config.main_path);
-          } else
-            flash.setErrors(data);
+      if(vm.uploader.queue.length > 0) {
+        vm.uploader.uploadAll();
+        vm.uploader.onCompleteItem = function(item, response, status, headers) {
+          updateCompleted(response);
+        };
+      }
+      else {
+        User.update(vm.userData).success(function(data) {
+          updateCompleted(data);
         });
+      }
     };
   }])
 

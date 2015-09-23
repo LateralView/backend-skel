@@ -2,10 +2,13 @@ var mongoose = require("mongoose"),
   Schema = mongoose.Schema,
   bcrypt = require("bcrypt-nodejs"),
   shortid = require('shortid'),
-  mailer = require("../helpers/mailer");
+  mailer = require("../helpers/mailer"),
+  config = require("../../config").config(),
+  s3Manager = require("../helpers/s3Manager"),
+  fs = require("fs");
 
 var validateEmail = function(email) {
-  var regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  var regex = /^\w+([\+\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   return regex.test(email)
 };
 
@@ -17,6 +20,22 @@ var UserSchema = new Schema({
   lastname: { type: String, trim: true, required: "Last name is required."},
   activation_token: { type: String, select: false, unique: true, 'default': shortid.generate },
   active: { type: Boolean, default: false, select: false },
+  picture: {
+    original_file: {
+      fieldname: String,
+      originalname: String,
+      name: String,
+      encoding: String,
+      mimetype: String,
+      path: String,
+      extension: String,
+      size: Number,
+      truncated: Boolean,
+      buffer: Buffer
+    },  
+    path: String,
+    url: String
+  },
   created_at: { type: Date, default: Date.now }
 });
 
@@ -37,6 +56,33 @@ UserSchema.pre("save", function(next) {
     next();
 });
 
+// Upload picture to s3
+UserSchema.pre('save', function(next) {
+  var user = this;
+  if(user.isNew || (user.picture.url && !user.isModified("picture.url"))) {
+    return next();
+  }
+
+  // Check if S3 keys are set
+  if(!config.aws.AWS_ACCESS_KEY_ID || !config.aws.AWS_SECRET_ACCESS_KEY || !config.aws.S3_BUCKET_NAME) {
+    if(user.picture && user.picture.original_file && user.picture.original_file.name) {
+      fs.unlink(__dirname + "/../../uploads/" + user.picture.original_file.name);
+      user.picture = null;
+    }
+    return next();
+  }
+  s3Manager.uploadFile(user.picture.original_file, "picture/" + user._id, function(err, path) {
+    if (err) {
+      return next(err);
+    }   
+    user.set("picture.path", path);
+    user.set("picture.url", config.aws.url_base + config.aws.S3_BUCKET_NAME + "/" + path);
+    fs.unlink(__dirname + "/../../uploads/" + user.picture.original_file.name);
+    next();
+  }); 
+});
+
+
 // Send welcome email with activation link
 UserSchema.post("save", function(user) {
   if (user.wasNew && process.env.NODE_ENV != 'test') {
@@ -56,7 +102,8 @@ UserSchema.methods.asJson = function() {
                 _id: user._id,
                 email: user.email,
                 firstname: user.firstname,
-                lastname: user.lastname
+                lastname: user.lastname,
+                picture: user.picture
               }
   return response_user;
 };
