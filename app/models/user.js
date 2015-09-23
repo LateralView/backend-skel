@@ -65,7 +65,7 @@ UserSchema.pre('save', function(next) {
 
   // Check if S3 keys are set
   if(!config.aws.AWS_ACCESS_KEY_ID || !config.aws.AWS_SECRET_ACCESS_KEY || !config.aws.S3_BUCKET_NAME) {
-    if(user.picture && user.picture.original_file) {
+    if(user.picture && user.picture.original_file && user.picture.original_file.name) {
       fs.unlink(__dirname + "/../../uploads/" + user.picture.original_file.name);
       user.picture = null;
     }
