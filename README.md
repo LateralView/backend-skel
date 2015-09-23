@@ -25,7 +25,9 @@ $ grunt @ENV
 
 ### Configuration
 
-Before running the app, set the database host, base URL and Mandrill API key in the **env.json** file. Also, don't forget to run the mongoDB server.
+Before running the app, set the database host, base URL, Mandrill API key and S3 keys in the **env.json** file.
+If S3 keys and/or bucket name are not set no errors will be thrown, but the files will not upload at all (for example in profile picture upload).
+Also, don't forget to run the mongoDB server.
 
 ### Run the App
 
