@@ -4,6 +4,23 @@
 
 <form class="form-horizontal" ng-submit="updateUserForm.$valid && user.saveUser()" name="updateUserForm" novalidate>
 	<div class="form-group">
+		<label class="col-sm-2 control-label">Picture</label>
+		<div class="col-sm-6" style="padding-top: 7px;">
+      <span ng-if="!user.userData.picture.url">
+        No picture selected
+      </span>
+      <div ng-if="user.userData.picture.url">
+        <img ng-src="{{ user.userData.picture.url }}" width="100" />
+      </div>
+		</div>
+	</div>
+  <file-upload
+      alias="picture"
+      form-data="user.userData"
+      uploader="user.uploader">
+  </file-upload>
+
+	<div class="form-group">
 		<label class="col-sm-2 control-label">Password</label>
 		<div class="col-sm-6">
 			<input type="password" class="form-control" name="currentPassword" ng-model="user.userData.password" ng-required="user.userData.new_password">

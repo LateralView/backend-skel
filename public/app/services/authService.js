@@ -1,10 +1,10 @@
 angular.module("services")
-	.factory("Auth", ['$http', '$q', 'SessionManager', function($http, $q, SessionManager) {
+	.factory("Auth", ['$http', '$q', 'SessionManager', 'config', function($http, $q, SessionManager, config) {
 		var authFactory = {};
 
 		// login
 		authFactory.login = function(email, password) {
-			return $http.post("/api/users/authenticate", {
+			return $http.post(config.api_url + "/users/authenticate", {
 				email: email,
 				password: password
 			})

@@ -26,7 +26,8 @@ module.exports = function(grunt) {
         constants: {
           config: {
             //place here constants for this environment
-            env: 'local'
+            env: 'local',
+            api_url: '/api'
           }
         }
       },
@@ -34,7 +35,8 @@ module.exports = function(grunt) {
         constants: {
           config: {
             //place here constants for this environment
-            env: 'development'
+            env: 'development',
+            api_url: '/api'
           }
         }
       },
@@ -43,7 +45,8 @@ module.exports = function(grunt) {
         constants: {
           config: {
             //place here constants for this environment
-            env: 'staging'
+            env: 'staging',
+            api_url: '/api'
           }
         }
       },
@@ -51,7 +54,8 @@ module.exports = function(grunt) {
         constants: {
           config: {
             //place here constants for this environment
-            env: 'production'
+            env: 'production',
+            api_url: '/api'
           }
         }
       }
