@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/LateralView/mean-skel.git",
   "dependencies": {
+    "aws-sdk": "^2.2.5",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.13.1",
     "express": "^4.12.4",
