@@ -27,6 +27,7 @@ app.use(morgan("dev"));
 
 // database connection
 mongoose.connect(config.database);
+mongoose.set('debug', (!process.env.NODE_ENV || process.env.NODE_ENV == 'development'));
 
 // set static files location
 app.use(express.static(__dirname + "/public"));
