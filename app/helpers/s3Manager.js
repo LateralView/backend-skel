@@ -10,20 +10,17 @@ aws.config.update({
 aws.config.region = config.aws.region;
 
 function uploadFile(file, path, next) {
-	try{
+	try {
 		var filePath = path + "/" + file.name;
-		var s3 = new aws.S3();
-		var params = { Bucket: config.aws.S3_BUCKET_NAME,
-					   Key: filePath,
-					   Body: fs.readFileSync('./' + file.path),
-					   ContentType: file.mimetype };
-
-		s3.putObject(params, function(err, data) {
-			if (err)
+		var body = fs.createReadStream(file.path);
+		var s3obj = new aws.S3({params: {Bucket: config.aws.S3_BUCKET_NAME, Key: filePath}});
+		s3obj.upload({Body: body, ContentType: file.mimetype}).
+		  send(function(err, data) {
+		  	if (err)
 				next(err);
 			else
 				next(null, filePath);
-		});
+		  });
 	} catch (err) {
 		next(err);
 	}
