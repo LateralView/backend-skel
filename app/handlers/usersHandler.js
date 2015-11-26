@@ -248,23 +248,20 @@ function updateCurrentUser(req, res) {
  *    }
  */
 function activateAccount(req, res) {
-  User.findOne({ activation_token: req.body.activation_token, active: false }, function(err, user) {
+  User.activateAccount(req.body.activation_token, function(err, user) {
     if (err) return res.send(err);
 
     if (user)
-      user.activateAccount(function(err){
-        if (err) return res.send(err);
         return res.json({
           success: true,
           message: "Account activated."
         });
-      });
     else
       return res.json({
         success: false,
         errors: {
           user: {
-            message: "Invalid token." 
+            message: "Invalid token."
           }
         }
       });

@@ -44,9 +44,9 @@ describe('User', function () {
       done();
     });
 
-    it('activates their account and deletes the activation token', function (done) {
-      validUser.activateAccount(function(){
-        expect(validUser.active).to.equal(true);
+    it('activates their account', function (done) {
+      User.activateAccount(validUser.activation_token, function(err, user){
+        expect(user.active).to.equal(true);
         done();
       });
     });

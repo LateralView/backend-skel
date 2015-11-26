@@ -108,11 +108,9 @@ UserSchema.methods.asJson = function() {
   return response_user;
 };
 
-UserSchema.methods.activateAccount = function(next) {
-  var user = this;
-  user.active = true;
-  user.save(function(err){
-    next(err);
+UserSchema.statics.activateAccount = function(token, callback) {
+  this.findOneAndUpdate({ activation_token: token, active: false }, { active: true }, { select: "active", new: true }, function (err, user){
+    callback(err, user);
   });
 };
 
