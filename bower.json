@@ -12,6 +12,6 @@
     "tests"
   ],
   "dependencies": {
-
+    "angular-file-upload": "~2.2.0"
   }
 }
