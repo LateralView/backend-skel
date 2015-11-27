@@ -1,8 +1,11 @@
 process.env.NODE_ENV = 'test';
 
 var mongoose = require('mongoose');
+var uriUtil = require('mongodb-uri');
 var config = require('../config').config();
 var async = require("async");
+
+var database = (process.env.TEST_DB || config.database)
 
 before(function (done) {
 
@@ -20,9 +23,11 @@ before(function (done) {
   }
 
   if (mongoose.connection.readyState === 0) {
-    mongoose.connect(config.database, function (err) {
-      if (err)
-        throw err;
+    var mongooseUri = uriUtil.formatMongoose(database);
+    mongoose.connect(mongooseUri);
+    var conn = mongoose.connection;
+
+    conn.once('open', function() {
       return clearDB();
     });
   } else

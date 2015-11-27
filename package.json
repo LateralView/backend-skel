@@ -36,6 +36,7 @@
   "devDependencies": {
     "chai": "^3.0.0",
     "mocha": "^2.2.5",
-    "async": "^1.5.0"
+    "async": "^1.5.0",
+    "mongodb-uri": "^0.9.7"
   }
 }
