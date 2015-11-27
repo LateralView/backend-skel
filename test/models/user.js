@@ -9,7 +9,7 @@ describe('User', function () {
     var password = "12345678";
 
     // Create a user and store it in validUser object
-    beforeEach(function(done){
+    before(function(done){
       var userData = {
         email: "test@test.com",
         password: password,
@@ -53,52 +53,56 @@ describe('User', function () {
 
   });
 
-  it('is invalid with a taken email', function (done) {
-  	var validUser = {
-    	email: "test@test.com",
-     	password: "12345678"
-   	};
+  describe('Invalid User', function () {
 
-   	var invalidUser = {
-    	email: "test@test.com", // taken email
-     	password: "12345678"
-   	};
+    it('is invalid with a taken email', function (done) {
+    	var validUser = {
+      	email: "test@test.com",
+       	password: "12345678"
+     	};
 
-   	User.create(validUser, function (error, user) {
-    	// Create second user with same email
-    	User.create(invalidUser, function (error, user) {
-    		expect(error).to.not.equal(null);
-    		done();
-	   	});
-   	});
-  });
+     	var invalidUser = {
+      	email: "test@test.com", // taken email
+       	password: "12345678"
+     	};
 
-  it('is invalid with an invalid email', function (done) {
-   	var user = {
-    	email: "test", // invalid email
-     	password: "12345678"
-   	};
+     	User.create(validUser, function (error, user) {
+      	// Create second user with same email
+      	User.create(invalidUser, function (error, user) {
+      		expect(error).to.not.equal(null);
+      		done();
+  	   	});
+     	});
+    });
 
-   	User.create(user, function (error, user) {
-    	expect(error).to.not.equal(null);
-    	email_error = error.errors.email;
-    	expect(email_error.message).to.equal("Please fill a valid email address.");
-    	done();
-   	});
-  });
+    it('is invalid with an invalid email', function (done) {
+     	var user = {
+      	email: "test", // invalid email
+       	password: "12345678"
+     	};
 
-  it('is invalid with a password length less than 8 characters', function (done) {
-   	var user = {
-    	email: "test@test.com", // invalid email
-     	password: "1234567"
-   	};
+     	User.create(user, function (error, user) {
+      	expect(error).to.not.equal(null);
+      	email_error = error.errors.email;
+      	expect(email_error.message).to.equal("Please fill a valid email address.");
+      	done();
+     	});
+    });
 
-   	User.create(user, function (error, user) {
-    	expect(error).to.not.equal(null);
-    	password_error = error.errors.password;
-    	expect(password_error.message).to.equal("Password is too short.");
-    	done();
-   	});
-  });
+    it('is invalid with a password length less than 8 characters', function (done) {
+     	var user = {
+      	email: "test@test.com", // invalid email
+       	password: "1234567"
+     	};
+
+     	User.create(user, function (error, user) {
+      	expect(error).to.not.equal(null);
+      	password_error = error.errors.password;
+      	expect(password_error.message).to.equal("Password is too short.");
+      	done();
+     	});
+    });
+
+  })
 
 });
