@@ -3,7 +3,7 @@ process.env.NODE_ENV = 'test';
 var mongoose = require('mongoose');
 var config = require('../config').config();
 
-beforeEach(function (done) {
+before(function (done) {
 
  function clearDB() {
    for (var i in mongoose.connection.collections) {
@@ -24,7 +24,7 @@ beforeEach(function (done) {
  }
 });
 
-afterEach(function (done) {
+after(function (done) {
   mongoose.disconnect();
   return done();
 });
