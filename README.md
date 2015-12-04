@@ -20,10 +20,7 @@ POST /api/users/ 200 388.902 ms - 27
 $ git clone git@github.com:LateralView/mean-skel.git
 $ cd mean-skel
 $ npm install
-$ grunt @ENV
 ```
-
-**@ENV** is the environment where you want to run the app (local | development | staging | production). It allows to create a config file for the frontend depending on the environment. Set the **gruntfile.js** file accordingly
 
 ### Configuration
 
@@ -36,6 +33,10 @@ Also, don't forget to run the mongoDB server.
 ```sh
 $ node server.js
 ```
+
+### Apidoc
+
+The apidoc is created with grunt post-install script. It can be accessed through **http://localhost:8080/apidoc**
 
 ### Tests
 
@@ -75,7 +76,7 @@ mean-skel
 * **App Folder** -> Backend logic.
 * **Public Folder** -> Frontend: Angular app.
 * **Test Folder** -> Unit Tests.
-* **Apidoc Folder** -> Documentation from API descriptions in the source code. Created when running **grunt @ENV**
+* **Apidoc Folder** -> Auto-generated API documentation.
 * **env.json** -> Backend configuration depending on the environment.
 * **gruntfile.js** -> Grunt configuration. Run tasks and create config files depending on the environment.
 * **server.js** -> Express server.
