@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "mocha test",
-    "postinstall": "grunt createConfig"
+    "postinstall": "grunt createConfig && node_modules/bower/bin/bower install"
   },
   "repository": {
     "type": "git",
@@ -22,10 +22,10 @@
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.14.1",
     "express": "^4.13.3",
-    "grunt-apidoc": "^0.10.1",
-    "grunt-ng-constant": "^1.1.0",
     "grunt": "0.4.5",
+    "grunt-apidoc": "^0.10.1",
     "grunt-cli": "0.1.13",
+    "grunt-ng-constant": "^1.1.0",
     "jsonwebtoken": "^5.4.1",
     "mandrill-api": "^1.0.45",
     "matchdep": "^1.0.0",
@@ -37,6 +37,7 @@
   "devDependencies": {
     "chai": "^3.0.0",
     "mocha": "^2.2.5",
+    "bower": "^1.6.8",
     "async": "^1.5.0",
     "mongodb-uri": "^0.9.7"
   }
