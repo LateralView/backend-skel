@@ -7,17 +7,12 @@ var mongoose = require("mongoose"),
   s3Manager = require("../helpers/s3Manager"),
   fs = require("fs");
 
-var validateEmail = function(email) {
-  var regex = /^\w+([\+\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-  return regex.test(email)
-};
-
 // user schema
 var UserSchema = new Schema({
-  email: { type: String, trim: true, required: "Email is required.", index: { unique: true }, validate: [validateEmail, "Please fill a valid email address."]},
+  email: { type: String, trim: true, required: "Email is required.", index: { unique: true }},
   password: { type: String, required: "Password is required.", select: false, minlength: [8, "Password is too short." ] },
-  firstname: { type: String, trim: true, required: "First name is required."},
-  lastname: { type: String, trim: true, required: "Last name is required."},
+  firstname: { type: String, trim: true, required: "Firstname is required."},
+  lastname: { type: String, trim: true, required: "Lastname is required."},
   activation_token: { type: String, select: false, unique: true, 'default': shortid.generate },
   active: { type: Boolean, default: false, select: false },
   picture: {
@@ -32,12 +27,17 @@ var UserSchema = new Schema({
       size: Number,
       truncated: Boolean,
       buffer: Buffer
-    },  
+    },
     path: String,
     url: String
   },
   created_at: { type: Date, default: Date.now }
 });
+
+UserSchema.path('email').validate(function (value) {
+  var regex = /^\w+([\+\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  return regex.test(value);
+}, 'Please fill a valid email address.');
 
 // hash password before user is saved
 UserSchema.pre("save", function(next) {
@@ -74,12 +74,12 @@ UserSchema.pre('save', function(next) {
   s3Manager.uploadFile(user.picture.original_file, "picture/" + user._id, function(err, path) {
     if (err) {
       return next(err);
-    }   
+    }
     user.set("picture.path", path);
     user.set("picture.url", config.aws.url_base + config.aws.S3_BUCKET_NAME + "/" + path);
     fs.unlink(__dirname + "/../../uploads/" + user.picture.original_file.name);
     next();
-  }); 
+  });
 });
 
 
