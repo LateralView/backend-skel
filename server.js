@@ -11,23 +11,30 @@ var express = require("express"),
 
 // ---- APP CONFIGURATION ----
 
+// log all requests to the console
+app.use(morgan("dev"));
+
 app.use(bodyParser.json());
 app.use(multer({ dest: './uploads/' }));
 
 // handle CORS requests
 app.use(function(req, res, next){
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST");
-  res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type,Authorization");
-  next();
-})
+  res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type,x-access-token");
 
-// log all requests to the console
-app.use(morgan("dev"));
+  if ('OPTIONS' == req.method)
+    res.send(200);
+  else
+    next();
+})
 
 // database connection
 mongoose.connect(config.database);
 mongoose.set('debug', (!process.env.NODE_ENV || process.env.NODE_ENV == 'development'));
+
+// apidoc route
+app.use('/apidoc', express.static(__dirname + '/apidoc'));
 
 // set static files location
 app.use(express.static(__dirname + "/public"));
