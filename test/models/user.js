@@ -89,9 +89,37 @@ describe('User', function () {
      	});
     });
 
+    it('is invalid without firstname', function (done) {
+      var user = {
+        email: "nofirstname@test.com",
+        password: "12345678"
+      };
+
+      User.create(user, function (error, user) {
+        expect(error).to.not.equal(null);
+        firstname_error = error.errors.firstname;
+        expect(firstname_error.message).to.equal("Firstname is required.");
+        done();
+      });
+    });
+
+    it('is invalid without lastname', function (done) {
+      var user = {
+        email: "nolastname@test.com",
+        password: "12345678"
+      };
+
+      User.create(user, function (error, user) {
+        expect(error).to.not.equal(null);
+        lastname_error = error.errors.lastname;
+        expect(lastname_error.message).to.equal("Lastname is required.");
+        done();
+      });
+    });
+
     it('is invalid with a password length less than 8 characters', function (done) {
      	var user = {
-      	email: "test@test.com", // invalid email
+      	email: "invalidapassword@test.com",
        	password: "1234567"
      	};
 
