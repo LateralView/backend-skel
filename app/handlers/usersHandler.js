@@ -7,7 +7,7 @@ var secret_token = config.secret;
 /**
  * @api {post} /api/users/authenticate Authenticate user
  * @apiName authenticate
- * @apiGroup users
+ * @apiGroup Users
  * @apiVersion 0.1.0
  *
  * @apiParam {String} email User email
@@ -78,7 +78,7 @@ function authenticate(req, res){
 /**
  * @api {post} /api/users Register new user
  * @apiName user_create
- * @apiGroup users
+ * @apiGroup Users
  * @apiVersion 0.1.0
  *
  * @apiParam {String} email User email
@@ -145,7 +145,7 @@ function createUser(req, res){
 /**
  * @api {put} /api/users Update user
  * @apiName user_update
- * @apiGroup users
+ * @apiGroup Users
  * @apiVersion 0.1.0
  *
  * @apiHeader {String} x-access-token Users unique access token
@@ -228,7 +228,7 @@ function updateCurrentUser(req, res) {
 /**
  * @api {post} /api/users/activate Activate user
  * @apiName user_activate
- * @apiGroup users
+ * @apiGroup Users
  * @apiVersion 0.1.0
  *
  * @apiParam {String} activation_token Activation token
