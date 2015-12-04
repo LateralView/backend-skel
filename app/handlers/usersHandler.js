@@ -8,6 +8,7 @@ var secret_token = config.secret;
  * @api {post} /api/users/authenticate Authenticate user
  * @apiName authenticate
  * @apiGroup users
+ * @apiVersion 0.1.0
  *
  * @apiParam {String} email User email
  * @apiParam {String} password User password
@@ -20,8 +21,8 @@ var secret_token = config.secret;
  *      user: {
  *        _id: user._id,
  *        email: "user@example.com",
- *        firstname: "Jorge",
- *        lastname: "Perez"
+ *        firstname: "John",
+ *        lastname: "Doe"
  *      }
  *    }
  *
@@ -62,7 +63,7 @@ function authenticate(req, res){
             var token = jwt.sign({
               _id: user._id,
               email: user.email
-            }, secret_token, { expiresInMinutes: 1440 });
+            }, secret_token, { expiresIn: 86400 }); // 86400 seconds = 1 day
             res.json({
               success: true,
               token:  token,
@@ -78,11 +79,12 @@ function authenticate(req, res){
  * @api {post} /api/users Register new user
  * @apiName user_create
  * @apiGroup users
+ * @apiVersion 0.1.0
  *
  * @apiParam {String} email User email
  * @apiParam {String} password User password
- * @apiParam {String} firstname User name
- * @apiParam {String} lastname User last name
+ * @apiParam {String} firstname User firstname
+ * @apiParam {String} lastname User lastname
  *
  * @apiSuccessExample Success-Response
  *    HTTP/1.1 200 OK
@@ -92,8 +94,8 @@ function authenticate(req, res){
  *      user: {
  *        _id: user._id,
  *        email: "user@example.com",
- *        firstname: "Jorge",
- *        lastname: "Perez"
+ *        firstname: "John",
+ *        lastname: "Doe"
  *      }
  *    }
  *
@@ -144,11 +146,14 @@ function createUser(req, res){
  * @api {put} /api/users Update user
  * @apiName user_update
  * @apiGroup users
+ * @apiVersion 0.1.0
+ *
+ * @apiHeader {String} x-access-token Users unique access token
  *
  * @apiParam {String} email User email
  * @apiParam {String} password User password
- * @apiParam {String} firstname User name
- * @apiParam {String} lastname User last name
+ * @apiParam {String} firstname User firstname
+ * @apiParam {String} lastname User lastname
  *
  * @apiSuccessExample Success-Response
  *    HTTP/1.1 200 OK
@@ -158,8 +163,8 @@ function createUser(req, res){
  *      user: {
  *        _id: user._id,
  *        email: "user@example.com",
- *        firstname: "Jorge",
- *        lastname: "Perez"
+ *        firstname: "John",
+ *        lastname: "Doe"
  *      }
  *    }
  *
@@ -224,6 +229,7 @@ function updateCurrentUser(req, res) {
  * @api {post} /api/users/activate Activate user
  * @apiName user_activate
  * @apiGroup users
+ * @apiVersion 0.1.0
  *
  * @apiParam {String} activation_token Activation token
  *
