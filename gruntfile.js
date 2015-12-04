@@ -4,10 +4,6 @@ module.exports = function(grunt) {
 
   // Project configuration.
   grunt.initConfig({
-    pkg: grunt.file.readJSON('package.json'),
-    auto_install: {
-      local: {}
-    },
     ngconstant: {
       // Options for all targets
       options: {
@@ -68,55 +64,11 @@ module.exports = function(grunt) {
     }
   });
 
-  // grunt.loadNpmTasks('grunt-ng-constant');
-  // grunt.loadNpmTasks('grunt-auto-install');
-  // grunt.loadNpmTasks('grunt-apidoc');
 
-  grunt.registerTask('local', function (target) {
-    if (target === 'dist') {
-      return grunt.task.run(['build', 'connect:dist:keepalive']);
-    }
-
+  grunt.registerTask('createConfig', function (target) {
+    var environment = process.env.NODE_ENV || "local";
     grunt.task.run([
-      'ngconstant:local',
-      'auto_install',
-      'apidoc'
-    ]);
-  });
-
-
-  grunt.registerTask('development', function (target) {
-    if (target === 'dist') {
-      return grunt.task.run(['build', 'connect:dist:keepalive']);
-    }
-
-    grunt.task.run([
-      'ngconstant:development',
-      'auto_install',
-      'apidoc'
-    ]);
-  });
-
-  grunt.registerTask('staging', function (target) {
-    if (target === 'dist') {
-      return grunt.task.run(['build', 'connect:dist:keepalive']);
-    }
-
-    grunt.task.run([
-      'ngconstant:staging',
-      'auto_install',
-      'apidoc'
-    ]);
-  });
-
-  grunt.registerTask('production', function (target) {
-    if (target === 'dist') {
-      return grunt.task.run(['build', 'connect:dist:keepalive']);
-    }
-
-    grunt.task.run([
-      'ngconstant:production',
-      'auto_install',
+      'ngconstant:' + environment,
       'apidoc'
     ]);
   });
