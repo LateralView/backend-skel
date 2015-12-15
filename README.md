@@ -222,3 +222,4 @@ The Angular app structure is inspired in the rails RESTful organization. The con
 
 
 Happy coding!
+
