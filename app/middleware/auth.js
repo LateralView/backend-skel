@@ -19,7 +19,7 @@ module.exports = function(req, res, next) {
 				User.findOne({ _id: decoded._id, email: decoded.email, active: true })
 					.select("+password")
 					.exec(function(err, user) {
-					if (err) {
+					if (err || !user) {
 						return res.status(403).send({
 							success: false,
 							message: "Failed to authenticate token."
