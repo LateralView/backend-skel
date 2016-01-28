@@ -12,7 +12,8 @@ var express = require("express"),
 // ---- APP CONFIGURATION ----
 
 // log all requests to the console
-app.use(morgan("dev"));
+if (process.env.NODE_ENV != 'test')
+  app.use(morgan("dev"));
 
 app.use(bodyParser.json());
 app.use(multer({ dest: './uploads/' }));
@@ -30,8 +31,10 @@ app.use(function(req, res, next){
 })
 
 // database connection
-mongoose.connect(config.database);
-mongoose.set('debug', (!process.env.NODE_ENV || process.env.NODE_ENV == 'development'));
+if (!mongoose.connection.readyState) {
+  mongoose.connect(config.database);
+  mongoose.set('debug', (!process.env.NODE_ENV || process.env.NODE_ENV == 'development'));
+}
 
 // apidoc route
 app.use('/apidoc', express.static(__dirname + '/apidoc'));
@@ -54,5 +57,8 @@ app.get("*", function(req, res){
 
 // ---- START SERVER ----
 var port = process.env.PORT || 8080;
-app.listen(port);
-console.log("Server running on port " + port);
+var server = app.listen(port, function(){
+  if (process.env.NODE_ENV != 'test') console.log("Server running on port " + port);
+});
+
+module.exports = server;

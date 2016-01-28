@@ -35,13 +35,14 @@
     "shortid": "^2.2.4"
   },
   "devDependencies": {
-    "chai": "^3.0.0",
-    "mocha": "^2.2.5",
-    "bower": "^1.6.8",
     "async": "^1.5.0",
-    "mongodb-uri": "^0.9.7",
+    "bower": "^1.6.8",
+    "chai": "^3.0.0",
     "factory-girl": "^2.2.0",
     "factory-girl-mongoose": "^1.0.0",
-    "faker": "^3.0.1"
+    "faker": "^3.0.1",
+    "mocha": "^2.2.5",
+    "mongodb-uri": "^0.9.7",
+    "supertest": "^1.1.0"
   }
 }
