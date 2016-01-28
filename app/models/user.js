@@ -11,8 +11,8 @@ var mongoose = require("mongoose"),
 var UserSchema = new Schema({
   email: { type: String, trim: true, required: "Email is required.", index: { unique: true }},
   password: { type: String, required: "Password is required.", select: false, minlength: [8, "Password is too short." ] },
-  firstname: { type: String, trim: true, required: "Firstname is required."},
-  lastname: { type: String, trim: true, required: "Lastname is required."},
+  firstname: { type: String, trim: true, required: "First name is required."},
+  lastname: { type: String, trim: true, required: "Last name is required."},
   activation_token: { type: String, select: false, unique: true, 'default': shortid.generate },
   active: { type: Boolean, default: false, select: false },
   picture: {
