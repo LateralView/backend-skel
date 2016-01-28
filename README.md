@@ -9,7 +9,7 @@ The app allows user sign-up, account activation, login, logout and profile editi
 ```sh
 ...
 GET /favicon.ico 304 2.113 ms - -
-ACTIVATION LINK: http://localhost:8080/activate/E1JpEbZw
+ACTIVATION LINK: http://localhost:8085/activate/E1JpEbZw
 POST /api/users/ 200 388.902 ms - 27
 ...
 ```
@@ -36,14 +36,32 @@ $ node server.js
 
 ### Apidoc
 
-The apidoc is created with grunt post-install script. It can be accessed through **http://localhost:8080/apidoc**
+The apidoc is created with grunt post-install script. It can be accessed through **http://localhost:8085/apidoc**
 
 ### Tests
 
-Tests (backend side only) are written with [Mocha](http://mochajs.org/) and [Chai](http://chaijs.com/)
+Tests (backend side only) are written with [Mocha](http://mochajs.org/), [Chai](http://chaijs.com/) and [Supertest](https://github.com/visionmedia/supertest/).
 
 ```sh
 $ npm test
+```
+
+We also use [Factory Girl](https://github.com/aexmachina/factory-girl) and [Faker.js](https://github.com/marak/Faker.js/) to create model instances. If you need to define new factories add them inside the register function present on **/test/factories.js** file.
+
+```javascript
+...
+var register = function() {
+    // User factory
+    factory.define('user', User, {
+        email: function() {
+            return faker.internet.email();
+        },
+        password: faker.internet.password(),
+        firstname: faker.name.firstName(),
+        lastname: faker.name.lastName()
+    });
+}
+...
 ```
 
 # Directory Structure
