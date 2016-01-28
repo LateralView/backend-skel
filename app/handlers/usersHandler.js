@@ -143,7 +143,7 @@ function createUser(req, res){
 }
 
 /**
- * @api {put} /api/users Update user
+ * @api {put} /api/user Update user
  * @apiName user_update
  * @apiGroup Users
  * @apiVersion 0.1.0
