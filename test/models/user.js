@@ -48,7 +48,9 @@ describe('User', function () {
 
     it('activates their account', function (done) {
       User.activateAccount(validUser.activation_token, function(err, user){
+        expect(err).to.not.exist;
         expect(user.active).to.equal(true);
+        expect(user.activation_token).to.not.equal(validUser.activation_token);
         done();
       });
     });

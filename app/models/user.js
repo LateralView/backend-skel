@@ -109,7 +109,9 @@ UserSchema.methods.asJson = function() {
 };
 
 UserSchema.statics.activateAccount = function(token, callback) {
-  this.findOneAndUpdate({ activation_token: token, active: false }, { active: true }, { select: "active", new: true }, function (err, user){
+  // Activate account and change token
+  var new_token = shortid.generate();
+  this.findOneAndUpdate({ activation_token: token, active: false }, { active: true, activation_token: new_token }, { select: "active", new: true }, function (err, user){
     callback(err, user);
   });
 };
