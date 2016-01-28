@@ -1,31 +1,23 @@
-var utils = require('../utils'),
-    expect = require('chai').expect,
-    User = require('../../app/models/user');
-
-var factory = require('factory-girl');
+var expect = require('chai').expect,
+    User = require('../../app/models/user'),
+    factory = require('factory-girl');
 
 describe('User', function () {
 
   describe('Valid User', function () {
     var validUser = null;
-    var password = null;
+    var password = "testpassword";
 
     // Create a user and store it in validUser object
     before(function(done){
-      factory.build("user", function (error, user) {
-        if (!error){
-          password = user.password;
-          user.save(function(err, user){
-            if(!err)
-              validUser = user;
-            else
-              throw err;
-          });
-        }
-        else
-          throw error;
+      // Create valid user
+      factory.create("user", {password: password}, function (error, user) {
+          if (!error)
+            validUser = user;
+          else
+            throw error;
 
-        done();
+          done();
       });
     });
 
