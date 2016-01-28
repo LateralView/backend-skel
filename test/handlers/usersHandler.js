@@ -222,19 +222,6 @@ describe('UsersHandler', function () {
   				.expect(200, done);
 	    });
 
-	    it('responds with error if some validation fails', function (done) {
-	    	request(server)
-	    		.put('/api/user')
-	    		.set('x-access-token', access_token)
-	    		.send({ firstname: "  " }) // Invalid update
-	    		.expect('Content-Type', /json/)
-	    		.expect(function(response){
-  					expect(response.body.success).to.not.exist;
-  					expect(response.body.errors).to.exist;
-  				})
-  				.expect(200, done);
-	    });
-
 	    it('responds success if the user was updated', function (done) {
 	    	request(server)
 	    		.put('/api/user')
