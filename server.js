@@ -56,7 +56,7 @@ app.get("*", function(req, res){
 });
 
 // ---- START SERVER ----
-var port = process.env.PORT || 8080;
+var port = process.env.PORT || 8085;
 var server = app.listen(port, function(){
   if (process.env.NODE_ENV != 'test') console.log("Server running on port " + port);
 });
