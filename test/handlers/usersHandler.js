@@ -214,6 +214,22 @@ describe('UsersHandler', function () {
 				}, done);
 	    });
 
+	    it('responds with error if current password is invalid', function (done) {
+	    	request(server)
+	    		.put('/api/user')
+	    		.set('x-access-token', access_token)
+	    		.send({ password: "invalid", new_password: "newtestpassword" })
+	    		.expect('Content-Type', /json/)
+  				.expect(200, {
+					success: false,
+					message: "User validation failed",
+					errors: {
+						password: {
+							message: "Current password is invalid." }
+						}
+					}, done);
+	    });
+
 	    it('responds with error if some validation fails', function (done) {
 	    	request(server)
 	    		.put('/api/user')
