@@ -74,7 +74,7 @@ describe('UsersHandler', function () {
   					}, done);
 	    });
 
-	    it('responds with token if login success', function (done) {
+	    it('responds with token and user info if login success', function (done) {
 	    	// Set active flag as true
 	    	validUser.active = true;
 	    	validUser.save(function(err, user) {
@@ -85,6 +85,11 @@ describe('UsersHandler', function () {
 	  				.expect(function(response){
 	  					expect(response.body.success).to.equal(true);
 	  					expect(response.body.token).to.exist;
+	  					expect(response.body.user).to.exist;
+	  					expect(response.body.user.email).to.equal(validUser.email);
+	  					expect(response.body.user.firstname).to.equal(validUser.firstname);
+	  					expect(response.body.user.lastname).to.equal(validUser.lastname);
+	  					expect(response.body.user._id).to.equal(String(validUser._id));
 	  				})
 	  				.expect(200, done);
 	    	});
@@ -222,15 +227,32 @@ describe('UsersHandler', function () {
   				.expect(200, done);
 	    });
 
-	    it('responds success if the user was updated', function (done) {
+	    it('responds with success and user info if the user was updated', function (done) {
 	    	request(server)
 	    		.put('/api/user')
 	    		.set('x-access-token', access_token)
-	    		.send({ firstname: "Robert" })
+	    		.send({ firstname: "Derrick", lastname: "Faulkner" })
 	    		.expect('Content-Type', /json/)
 	    		.expect(function(response){
   					expect(response.body.success).to.equal(true);
   					expect(response.body.errors).to.not.exist;
+  					expect(response.body.user).to.exist;
+  					expect(response.body.user.email).to.equal(validUser.email);
+  					expect(response.body.user.firstname).to.equal("Derrick");
+  					expect(response.body.user.lastname).to.equal("Faulkner");
+  					expect(response.body.user._id).to.equal(String(validUser._id));
+  				})
+  				.expect(200, done);
+	    });
+
+	    it('accepts picture param with an image attached', function (done) {
+	    	request(server)
+	    		.put('/api/user')
+	    		.set('x-access-token', access_token)
+	    		.attach('picture', './test/fixtures/avatar.png')
+	    		.expect('Content-Type', /json/)
+	    		.expect(function(response){
+  					expect(response.body.success).to.equal(true);
   				})
   				.expect(200, done);
 	    });
