@@ -1,6 +1,7 @@
 var request = require('supertest'),
     factory = require('factory-girl'),
     User = require('../../app/models/user'),
+    nock = require('nock'),
     expect = require('chai').expect;
 
 describe('UsersHandler', function () {
@@ -243,6 +244,36 @@ describe('UsersHandler', function () {
   				.expect(200, done);
 	    });
 
+	    it('responds with error if file is invalid', function (done) {
+	    	// Mock s3 response
+			nock('https://mean-skel.s3.amazonaws.com:443')
+				.put(/.*picture*./)
+				.reply(200, "", { 'x-amz-id-2': '6pv/eHWz7VrUPAJNr15F3OzFiXIFi/QJU0UArw3pG7/xYSh5LaX+8RQDelmFp61bYuHvWXTJaWs=',
+					'x-amz-request-id': '3F74105A9E031597',
+					date: 'Tue, 02 Feb 2016 14:14:33 GMT',
+					etag: '"21a280f3002ffdf828edd9b56eef380f"',
+					'content-length': '0',
+					server: 'AmazonS3',
+					connection: 'close' });
+
+	    	request(server)
+	    		.put('/api/user')
+	    		.set('x-access-token', access_token)
+	    		.send({ firstname: "Derrick", lastname: "Faulkner" })
+	    		.attach('picture', './test/fixtures/invalid-avatar.txt')
+	    		.expect('Content-Type', /json/)
+	    		.expect(function(response){
+  					expect(response.body.success).to.not.exist;
+  					expect(response.body.errors).to.exist;
+  				})
+  				.expect(200)
+  				.end(function(err, res){
+  					nock.cleanAll();
+					done();
+				});;
+	    });
+
+
 	    it('responds with success and user info if the user was updated', function (done) {
 	    	request(server)
 	    		.put('/api/user')
@@ -261,7 +292,18 @@ describe('UsersHandler', function () {
   				.expect(200, done);
 	    });
 
-	    it('accepts picture param with an image attached', function (done) {
+	    it('uploads an avatar to user', function (done) {
+	    	// Mock s3 response
+			nock('https://mean-skel.s3.amazonaws.com:443')
+				.put(/.*picture*./)
+				.reply(200, "", { 'x-amz-id-2': '6pv/eHWz7VrUPAJNr15F3OzFiXIFi/QJU0UArw3pG7/xYSh5LaX+8RQDelmFp61bYuHvWXTJaWs=',
+					'x-amz-request-id': '3F74105A9E031597',
+					date: 'Tue, 02 Feb 2016 14:14:33 GMT',
+					etag: '"21a280f3002ffdf828edd9b56eef380f"',
+					'content-length': '0',
+					server: 'AmazonS3',
+					connection: 'close' });
+
 	    	request(server)
 	    		.put('/api/user')
 	    		.set('x-access-token', access_token)
@@ -269,8 +311,43 @@ describe('UsersHandler', function () {
 	    		.expect('Content-Type', /json/)
 	    		.expect(function(response){
   					expect(response.body.success).to.equal(true);
+  					expect(response.body.user.picture.url).to.exist;
+  					validUser.picture = response.body.user.picture;
   				})
-  				.expect(200, done);
+  				.expect(200)
+  				.end(function(err, res){
+  					nock.cleanAll();
+					done();
+				});;
+	    });
+
+	    it('modifies existing avatar', function (done) {
+	    	// Mock s3 response
+			nock('https://mean-skel.s3.amazonaws.com:443')
+				.put(/.*picture*./)
+				.reply(200, "", { 'x-amz-id-2': '6pv/eHWz7VrUPAJNr15F3OzFiXIFi/QJU0UArw3pG7/xYSh5LaX+8RQDelmFp61bYuHvWXTJaWs=',
+					'x-amz-request-id': '3F74105A9E031597',
+					date: 'Tue, 02 Feb 2016 14:14:33 GMT',
+					etag: '"21a280f3002ffdf828edd9b56eef380f"',
+					'content-length': '0',
+					server: 'AmazonS3',
+					connection: 'close' });
+
+	    	request(server)
+	    		.put('/api/user')
+	    		.set('x-access-token', access_token)
+	    		.attach('picture', './test/fixtures/avatar.png')
+	    		.expect('Content-Type', /json/)
+	    		.expect(function(response){
+  					expect(response.body.success).to.equal(true);
+  					expect(response.body.user.picture.url).to.exist;
+  					expect(response.body.user.picture.url).to.not.equal(validUser.picture.url);
+  				})
+  				.expect(200)
+  				.end(function(err, res){
+  					nock.cleanAll();
+					done();
+				});;
 	    });
     });
 

@@ -215,12 +215,12 @@ function updateCurrentUser(req, res) {
     user.lastname = req.body.lastname
   }
 
-  user.save(function(err){
+  user.save(function(err, updatedUser){
     if (err) return res.send(err);
     res.json({
       success: true,
       message: "User updated!",
-      user: user.asJson()
+      user: updatedUser.asJson()
     });
   });
 }
