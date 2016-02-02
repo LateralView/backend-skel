@@ -31,7 +31,7 @@
     "jsonwebtoken": "^5.4.1",
     "mandrill-api": "^1.0.45",
     "matchdep": "^1.0.0",
-    "mongoose": "^4.2.8",
+    "mongoose": "^4.3.7",
     "morgan": "^1.6.1",
     "multer": "^0.1.8",
     "shortid": "^2.2.4"
