@@ -1,5 +1,3 @@
-process.env.NODE_ENV = 'test';
-
 var mongoose = require('mongoose');
 var uriUtil = require('mongodb-uri');
 var config = require('../config').config();
