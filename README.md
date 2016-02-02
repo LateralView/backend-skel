@@ -41,7 +41,7 @@ The apidoc is created with grunt post-install script. It can be accessed through
 
 ### Tests
 
-Tests (backend side only) are written with [Mocha](http://mochajs.org/), [Chai](http://chaijs.com/) and [Supertest](https://github.com/visionmedia/supertest/).
+Tests (backend side only) are written with [Mocha](http://mochajs.org/), [Chai](http://chaijs.com/), [Supertest](https://github.com/visionmedia/supertest/) and [Nock](https://github.com/pgte/nock).
 
 ```sh
 $ npm test
