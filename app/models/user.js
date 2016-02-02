@@ -95,7 +95,9 @@ UserSchema.pre('save', function(next) {
 // Send welcome email with activation link
 UserSchema.post("save", function(user) {
   if (user.wasNew && process.env.NODE_ENV != 'test') {
-    mailer.activationEmail(user);
+    mailer.sendActivationEmail(user, function(error){
+      // TODO: Handle error if exists
+    });
   }
 });
 
