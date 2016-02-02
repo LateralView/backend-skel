@@ -13,6 +13,10 @@ function uploadFile(file, path, next) {
 	try {
 		var filePath = path + "/" + file.name;
 		var body = fs.createReadStream(file.path);
+
+		// Handle read stream error
+		body.on('error', function(error){ next(error); });
+
 		var s3obj = new aws.S3({params: {Bucket: config.aws.S3_BUCKET_NAME, Key: filePath}});
 		s3obj.upload({Body: body, ContentType: file.mimetype}).
 		  send(function(err, data) {

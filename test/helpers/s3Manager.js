@@ -47,6 +47,32 @@ describe('s3Manager Helper', function () {
 			});
 	    });
 
+	    it('returns error if file does not exist', function (done) {
+			// Mock s3 response
+			nock('https://mean-skel.s3.amazonaws.com:443')
+				.put(/.*picture*./)
+				.reply(200, "", { 'x-amz-id-2': '6pv/eHWz7VrUPAJNr15F3OzFiXIFi/QJU0UArw3pG7/xYSh5LaX+8RQDelmFp61bYuHvWXTJaWs=',
+					'x-amz-request-id': '3F74105A9E031597',
+					date: 'Tue, 02 Feb 2016 14:14:33 GMT',
+					etag: '"21a280f3002ffdf828edd9b56eef380f"',
+					'content-length': '0',
+					server: 'AmazonS3',
+					connection: 'close' });
+
+			var file = {
+				name: "avatar.png",
+				path: "./invalid/path/image.png",
+				mimetype: "image/png"
+			};
+
+			s3Manager.uploadFile(file, "picture/" + validUser._id, function(err, path) {
+				nock.cleanAll();
+				expect(err).to.exist;
+				expect(err.code).to.equal("ENOENT");
+			    done();
+			});
+	    });
+
 	    it('returns error if response is an error', function (done) {
 			nock('https://mean-skel.s3.amazonaws.com:443')
 			  .put(/.*picture*./)
