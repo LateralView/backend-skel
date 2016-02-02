@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "mocha test",
+    "test": "NODE_ENV=test mocha test",
     "cover": "istanbul cover _mocha",
     "postinstall": "grunt createConfig && node_modules/bower/bin/bower install",
     "coveralls": "npm run cover -- --report lcovonly && cat ./coverage/lcov.info | coveralls"
