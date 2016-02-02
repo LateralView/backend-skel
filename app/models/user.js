@@ -21,7 +21,7 @@ var UserSchema = new Schema({
       originalname: String,
       name: String,
       encoding: String,
-      mimetype: String,
+      mimetype: { type: String, default: ''} ,
       path: String,
       extension: String,
       size: Number,
@@ -38,6 +38,14 @@ UserSchema.path('email').validate(function (value) {
   var regex = /^\w+([\+\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   return regex.test(value);
 }, 'Please fill a valid email address.');
+
+UserSchema.path('picture.original_file.mimetype').validate(function (value) {
+  if (value) {
+    var mimetypes = ["image/jpeg", "image/png"];
+    return (mimetypes.indexOf(value) > -1);
+  } else
+    return true;
+}, 'Invalid file.');
 
 // hash password before user is saved
 UserSchema.pre("save", function(next) {
@@ -59,7 +67,8 @@ UserSchema.pre("save", function(next) {
 // Upload picture to s3
 UserSchema.pre('save', function(next) {
   var user = this;
-  if(user.isNew || (user.picture.url && !user.isModified("picture.url"))) {
+
+  if(user.isNew || !user.isModified("picture")) {
     return next();
   }
 

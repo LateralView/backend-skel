@@ -115,6 +115,15 @@ describe('User', function () {
         done();
       });
     });
+
+    it('is invalid with a non-image file as picture', function (done) {
+      factory.create("user", { picture: { original_file: { mimetype: "application/zip" } } }, function (error, user) {
+        expect(error).to.exist;
+        image_error = error.errors['picture.original_file.mimetype'];
+        expect(image_error.message).to.equal("Invalid file.");
+        done();
+      });
+    });
   });
 
 });
