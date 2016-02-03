@@ -24,7 +24,6 @@ before(function (done) {
         }, function(err) {
           // Register factories
           factories.register();
-          insertInitialData();
           // Run tests
           done();
         });
