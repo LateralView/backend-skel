@@ -13,18 +13,21 @@ before(function (done) {
   function cleanDB() {
     // Remove all database documents and indexes
     async.each(mongoose.connection.collections, function(collection, callback) {
-      collection.remove(function(){
-        collection.dropIndexes(callback);
-      });
-    }, function(err){
+      collection.dropIndexes(callback);
+    }, function(err) {
       async.each(mongoose.connection.models, function(model, callback) {
         // Re-generate indexes
         model.ensureIndexes(callback);
-      }, function(err){
-        // Register factories
-        factories.register();
-        // Run tests
-        done();
+      }, function(err) {
+        async.each(mongoose.connection.collections, function(collection, callback) {
+          collection.remove(callback);
+        }, function(err) {
+          // Register factories
+          factories.register();
+          insertInitialData();
+          // Run tests
+          done();
+        });
       });
     });
   }
