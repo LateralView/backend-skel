@@ -35,7 +35,7 @@ describe('UsersHandler', function () {
 	    		.post('/api/users/authenticate')
   				.send({ email: 'notregistered@email.com', password: 'testtest' })
   				.expect('Content-Type', /json/)
-  				.expect(200,
+  				.expect(401,
   					{
   						success: false, message: "Login failed",
   						errors: {
@@ -50,7 +50,7 @@ describe('UsersHandler', function () {
 	    		.post('/api/users/authenticate')
   				.send({ email: validUser.email, password: 'invalid' })
   				.expect('Content-Type', /json/)
-  				.expect(200,
+  				.expect(401,
   					{
   						success: false, message: "Login failed",
   						errors: {
@@ -65,7 +65,7 @@ describe('UsersHandler', function () {
 	    		.post('/api/users/authenticate')
   				.send({ email: validUser.email, password: password })
   				.expect('Content-Type', /json/)
-  				.expect(200,
+  				.expect(401,
   					{
   						success: false, message: "Login failed",
   						errors: {
@@ -104,7 +104,7 @@ describe('UsersHandler', function () {
 	    		.post('/api/users')
   				.send({ email: validUser.email, password: 'testtest', firstname: 'James', lastname: 'Doe' })
   				.expect('Content-Type', /json/)
-  				.expect(200,
+  				.expect(409,
   					{
   						success: false, message: "User validation failed",
   						errors: {
@@ -123,7 +123,7 @@ describe('UsersHandler', function () {
   					expect(response.body.success).to.not.exist;
   					expect(response.body.errors).to.exist;
   				})
-  				.expect(200, done);
+  				.expect(400, done);
 	    });
 
 	    it('responds with success if the user was created', function (done) {
@@ -132,7 +132,7 @@ describe('UsersHandler', function () {
 		    		.post('/api/users')
 	  				.send({ email: user.email, password: user.password, firstname: user.firstname, lastname: user.lastname })
 	  				.expect('Content-Type', /json/)
-	  				.expect(200,
+	  				.expect(201,
 	  					{
 	      					success: true,
 	      					message: "User created!"
@@ -156,7 +156,7 @@ describe('UsersHandler', function () {
 	    		.post('/api/users/activate')
   				.send({ activation_token: 'invalidtoken' })
   				.expect('Content-Type', /json/)
-  				.expect(200,
+  				.expect(400,
   					{
 						success: false,
 						errors: {
@@ -221,7 +221,7 @@ describe('UsersHandler', function () {
 	    		.set('x-access-token', access_token)
 	    		.send({ password: "invalid", new_password: "newtestpassword" })
 	    		.expect('Content-Type', /json/)
-  				.expect(200, {
+  				.expect(400, {
 					success: false,
 					message: "User validation failed",
 					errors: {
@@ -241,7 +241,7 @@ describe('UsersHandler', function () {
   					expect(response.body.success).to.not.exist;
   					expect(response.body.errors).to.exist;
   				})
-  				.expect(200, done);
+  				.expect(400, done);
 	    });
 
 	    it('responds with error if file is invalid', function (done) {
@@ -266,7 +266,7 @@ describe('UsersHandler', function () {
   					expect(response.body.success).to.not.exist;
   					expect(response.body.errors).to.exist;
   				})
-  				.expect(200)
+  				.expect(404)
   				.end(function(err, res){
   					nock.cleanAll();
 					done();
