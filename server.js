@@ -7,7 +7,8 @@ var express = require("express"),
   jwt = require("jsonwebtoken"),
   config = require("./config").config(),
   path = require("path"),
-  routes = require("./app/routes/routes");
+  routes = require("./app/routes/routes"),
+  attachments = require("./app/middleware/attachments");
 
 // ---- APP CONFIGURATION ----
 
@@ -38,6 +39,9 @@ if (!mongoose.connection.readyState) {
 
 // apidoc route
 app.use('/apidoc', express.static(path.join(__dirname, '/apidoc')));
+
+// remove attachments when request finishes
+app.use(attachments.remove);
 
 // set static files location
 app.use(express.static(path.join(__dirname, "/public")));

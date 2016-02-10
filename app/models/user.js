@@ -5,7 +5,6 @@ var mongoose = require("mongoose"),
   mailer = require("../helpers/mailer"),
   config = require("../../config").config(),
   s3Manager = require("../helpers/s3Manager"),
-  mpath = require("path"),
   fs = require("fs");
 
 // user schema
@@ -75,19 +74,14 @@ UserSchema.pre('save', function(next) {
 
   // Check if S3 keys are set
   if(!config.aws.AWS_ACCESS_KEY_ID || !config.aws.AWS_SECRET_ACCESS_KEY || !config.aws.S3_BUCKET_NAME) {
-    if(user.picture && user.picture.original_file && user.picture.original_file.name) {
-      fs.unlink(mpath.join(config.uploads_dir, user.picture.original_file.name));
-      user.picture = null;
-    }
     return next();
   }
+
   s3Manager.uploadFile(user.picture.original_file, "picture/" + user._id, function(err, path) {
-    if (err) {
-      return next(err);
-    }
+    if (err) return next(err);
+
     user.set("picture.path", path);
     user.set("picture.url", config.aws.url_base + config.aws.S3_BUCKET_NAME + "/" + path);
-    fs.unlink(mpath.join(config.uploads_dir, user.picture.original_file.name));
     next();
   });
 });
