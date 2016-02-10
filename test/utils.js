@@ -6,7 +6,6 @@ var async = require("async");
 var factories = require('./factories');
 var database = (process.env.TEST_DB || config.database);
 var mongooseUri = uriUtil.formatMongoose(database);
-var server = require('../server');
 
 before(function (done) {
 
@@ -32,7 +31,8 @@ before(function (done) {
   }
 
   // Connect to mongo and clean test database
-  mongoose.connect(mongooseUri, function() {
+  mongoose.connect(mongooseUri, function(result) {
+    // Clean DB and regenerate indexes
     cleanDB();
   });
 });

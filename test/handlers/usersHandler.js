@@ -2,14 +2,16 @@ var request = require('supertest'),
     factory = require('factory-girl'),
     User = require('../../app/models/user'),
     nock = require('nock'),
-    expect = require('chai').expect,
-    server = require('../../server');
+    expect = require('chai').expect;
 
 describe('UsersHandler', function () {
 	var validUser = null;
 	var password = "testpassword";
+	var server;
 
 	before(function(done){
+		server = require('../../server');
+
     	// Create valid user
     	factory.create("user", {password: password}, function (error, user) {
 	        if (!error)
