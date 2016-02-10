@@ -29,7 +29,7 @@ function sendActivationEmail(user, done) {
 	catch(err) {
 	    done(err);
 	}
-};
+}
 
 exports.sendActivationEmail = sendActivationEmail;
 

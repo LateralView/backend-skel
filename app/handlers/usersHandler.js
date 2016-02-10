@@ -122,7 +122,7 @@ function createUser(req, res){
   user.save(function(err){
     if (err) {
       // duplicate entry
-      if (err.code == 11000)
+      if (err.code === 11000)
         return res.json({
           success: false,
           message: "User validation failed",

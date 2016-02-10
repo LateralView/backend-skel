@@ -13,7 +13,7 @@ var express = require("express"),
 // ---- APP CONFIGURATION ----
 
 // log all requests to the console
-if (process.env.NODE_ENV != 'test')
+if (process.env.NODE_ENV !== 'test')
   app.use(morgan("dev"));
 
 app.use(bodyParser.json());
@@ -62,7 +62,7 @@ app.get("*", function(req, res){
 // ---- START SERVER ----
 var port = process.env.PORT || 8085;
 var server = app.listen(port, function(){
-  if (process.env.NODE_ENV != 'test') console.log("Server running on port " + port);
+  if (process.env.NODE_ENV !== 'test') console.log("Server running on port " + port);
 });
 
 module.exports = server;
