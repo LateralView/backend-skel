@@ -2,17 +2,14 @@ var request = require('supertest'),
     factory = require('factory-girl'),
     User = require('../../app/models/user'),
     nock = require('nock'),
-    expect = require('chai').expect;
+    expect = require('chai').expect,
+    server = require('../../server');
 
 describe('UsersHandler', function () {
-	var server;
 	var validUser = null;
 	var password = "testpassword";
 
 	before(function(done){
-		// Run server
-    	server = require('../../server');
-
     	// Create valid user
     	factory.create("user", {password: password}, function (error, user) {
 	        if (!error)
@@ -22,11 +19,6 @@ describe('UsersHandler', function () {
 
 	        done();
 	    });
-    });
-
-    after(function(done){
-    	// Stop server
-    	server.close(done);
     });
 
     describe('POST /api/users/authenticate', function () {
