@@ -16,7 +16,7 @@ if (process.env.NODE_ENV != 'test')
   app.use(morgan("dev"));
 
 app.use(bodyParser.json());
-app.use(multer({ dest: './uploads/' }));
+app.use(multer({ dest: config.uploads_dir }));
 
 // handle CORS requests
 app.use(function(req, res, next){
@@ -24,7 +24,7 @@ app.use(function(req, res, next){
   res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type,x-access-token");
 
-  if ('OPTIONS' == req.method)
+  if ('OPTIONS' === req.method)
     res.send(200);
   else
     next();
@@ -33,14 +33,14 @@ app.use(function(req, res, next){
 // database connection
 if (!mongoose.connection.readyState) {
   mongoose.connect(config.database);
-  mongoose.set('debug', (!process.env.NODE_ENV || process.env.NODE_ENV == 'development'));
+  mongoose.set('debug', (!process.env.NODE_ENV || process.env.NODE_ENV === 'development'));
 }
 
 // apidoc route
-app.use('/apidoc', express.static(__dirname + '/apidoc'));
+app.use('/apidoc', express.static(path.join(__dirname, '/apidoc')));
 
 // set static files location
-app.use(express.static(__dirname + "/public"));
+app.use(express.static(path.join(__dirname, "/public")));
 
 // Request Handlers
 var handlers = {
@@ -52,7 +52,7 @@ routes.setup(app, handlers);
 
 // ---- MAIN CATCHALL ROUTE - SEND USERS TO FRONTEND ----
 app.get("*", function(req, res){
-  res.sendFile(path.join(__dirname + "/public/app/views/index.html"));
+  res.sendFile(path.join(__dirname, "/public/app/views/index.html"));
 });
 
 // ---- START SERVER ----

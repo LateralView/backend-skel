@@ -7,7 +7,7 @@ function sendActivationEmail(user, done) {
 		var link = config.base_url + "/activate/" + user.activation_token;
 
 		// TODO: remove this line
-		if (process.env.NODE_ENV != 'test') console.log("ACTIVATION LINK: " + link);
+		if (process.env.NODE_ENV !== 'test') console.log("ACTIVATION LINK: " + link);
 
     	var message = {
 		    "html": "<p>Welcome! " + user.email + "</p><p>Please follow this link to activate your account</p><p><a href='" + link + "'>" + link + "</a></p>",

@@ -28,7 +28,7 @@ function uploadFile(file, path, next) {
 	} catch (err) {
 		next(err);
 	}
-};
+}
 
 function deleteFile(key, next) {
 	try{
