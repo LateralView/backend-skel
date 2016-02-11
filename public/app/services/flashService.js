@@ -14,8 +14,9 @@ angular.module("services")
     };
 
     return {
-      setMessage: function(message) {
-        queue.push({ type: 'success', msg: message });
+      setMessage: function(message, type) {
+				type = type || "success";
+        queue.push({ type: type, msg: message });
       },
       setErrors: function(data) {
         $rootScope.alerts = [];
