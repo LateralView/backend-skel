@@ -29,7 +29,7 @@ var secret_token = config.secret;
  * @apiError InvalidCredentials Wrong email or password
  *
  * @apiErrorExample Error-Response
- *    HTTP/1.1 200 OK
+ *    HTTP/1.1 401 Not Authorized
  *    {
  *      success: false,
  *      errors: {
@@ -47,17 +47,17 @@ function authenticate(req, res){
     .exec(function(err, user){
       if (err) throw err;
       if (!user) {
-        res.json({ success: false, message: "Login failed",
+        res.status(401).json({ success: false, message: "Login failed",
               errors: { user: { message: "Invalid Credentials."  } } });
       } else {
         var validPassword = user.comparePassword(req.body.password);
         if (!validPassword) {
-          res.json({ success: false, message: "Login failed",
+          res.status(401).json({ success: false, message: "Login failed",
               errors: { user: { message: "Invalid Credentials."  } } });
         } else {
           // Check if user is active
           if (!user.active) {
-            res.json({ success: false, message: "Login failed",
+            res.status(401).json({ success: false, message: "Login failed",
               errors: { user: { message: "Please activate your account."  } } });
           } else {
             var token = jwt.sign({
@@ -87,7 +87,7 @@ function authenticate(req, res){
  * @apiParam {String} lastname User lastname
  *
  * @apiSuccessExample Success-Response
- *    HTTP/1.1 200 OK
+ *    HTTP/1.1 201 Created
  *    {
  *      success: true,
  *      token:  "12345abcdef",
@@ -99,10 +99,23 @@ function authenticate(req, res){
  *      }
  *    }
  *
- * @apiError InvalidCredentials Wrong email or password
+ * @apiError EmailAlreadyExists The email already exists
  *
  * @apiErrorExample Error-Response
- *    HTTP/1.1 200 OK
+ *    HTTP/1.1 409 Conflict
+ *    {
+ *      success: false,
+ *      errors: {
+ *        email: {
+ *          message: "A user with that email already exists."
+ *        }
+ *      }
+ *    }
+ *
+ * @apiError ValidationError Validation error
+ *
+ * @apiErrorExample Error-Response
+ *    HTTP/1.1 400 Bad Request
  *    {
  *      success: false,
  *      errors: {
@@ -123,7 +136,7 @@ function createUser(req, res){
     if (err) {
       // duplicate entry
       if (err.code === 11000)
-        return res.json({
+        return res.status(409).json({
           success: false,
           message: "User validation failed",
           errors: {
@@ -133,9 +146,9 @@ function createUser(req, res){
           }
         });
       else
-        return res.send(err);
+        return res.status(400).send(err);
     }
-    res.json({
+    res.status(201).json({
       success: true,
       message: "User created!"
     });
@@ -171,7 +184,7 @@ function createUser(req, res){
  * @apiError InvalidPassword Wrong password
  *
  * @apiErrorExample Error-Response
- *    HTTP/1.1 200 OK
+ *    HTTP/1.1 400 Bad Request
  *    {
  *      success: false,
  *      errors: {
@@ -194,7 +207,7 @@ function updateCurrentUser(req, res) {
     // Check current password
     var validPassword = user.comparePassword(req.body.password);
     if (!validPassword) {
-      return res.json({
+      return res.status(400).json({
         success: false,
         message: "User validation failed",
         errors: {
@@ -216,7 +229,7 @@ function updateCurrentUser(req, res) {
   }
 
   user.save(function(err, updatedUser){
-    if (err) return res.send(err);
+    if (err) return res.status(400).send(err);
     res.json({
       success: true,
       message: "User updated!",
@@ -243,7 +256,7 @@ function updateCurrentUser(req, res) {
  * @apiError InvalidToken Invalid activation token
  *
  * @apiErrorExample Error-Response
- *    HTTP/1.1 200 OK
+ *    HTTP/1.1 400 Bad Request
  *    {
  *      success: false,
  *      errors: {
@@ -263,7 +276,7 @@ function activateAccount(req, res) {
           message: "Account activated."
         });
     else
-      return res.json({
+      return res.status(400).json({
         success: false,
         errors: {
           user: {
