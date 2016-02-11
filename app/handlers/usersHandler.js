@@ -16,7 +16,6 @@ var secret_token = config.secret;
  * @apiSuccessExample Success-Response
  *    HTTP/1.1 200 OK
  *    {
- *      success: true,
  *      token:  "12345abcdef",
  *      user: {
  *        _id: user._id,
@@ -31,7 +30,6 @@ var secret_token = config.secret;
  * @apiErrorExample Error-Response
  *    HTTP/1.1 401 Not Authorized
  *    {
- *      success: false,
  *      errors: {
  *        user: {
  *          message: "Invalid Credentials."
@@ -47,17 +45,17 @@ function authenticate(req, res){
     .exec(function(err, user){
       if (err) throw err;
       if (!user) {
-        res.status(401).json({ success: false, message: "Login failed",
+        res.status(401).json({ message: "Login failed",
               errors: { user: { message: "Invalid Credentials."  } } });
       } else {
         var validPassword = user.comparePassword(req.body.password);
         if (!validPassword) {
-          res.status(401).json({ success: false, message: "Login failed",
+          res.status(401).json({ message: "Login failed",
               errors: { user: { message: "Invalid Credentials."  } } });
         } else {
           // Check if user is active
           if (!user.active) {
-            res.status(401).json({ success: false, message: "Login failed",
+            res.status(401).json({ message: "Login failed",
               errors: { user: { message: "Please activate your account."  } } });
           } else {
             var token = jwt.sign({
@@ -65,7 +63,6 @@ function authenticate(req, res){
               email: user.email
             }, secret_token, { expiresIn: 86400 }); // 86400 seconds = 1 day
             res.json({
-              success: true,
               token:  token,
               user: user.asJson()
             });
@@ -89,7 +86,6 @@ function authenticate(req, res){
  * @apiSuccessExample Success-Response
  *    HTTP/1.1 201 Created
  *    {
- *      success: true,
  *      token:  "12345abcdef",
  *      user: {
  *        _id: user._id,
@@ -104,7 +100,6 @@ function authenticate(req, res){
  * @apiErrorExample Error-Response
  *    HTTP/1.1 409 Conflict
  *    {
- *      success: false,
  *      errors: {
  *        email: {
  *          message: "A user with that email already exists."
@@ -117,7 +112,6 @@ function authenticate(req, res){
  * @apiErrorExample Error-Response
  *    HTTP/1.1 400 Bad Request
  *    {
- *      success: false,
  *      errors: {
  *        email: {
  *          message: "A user with that email already exists."
@@ -137,7 +131,6 @@ function createUser(req, res){
       // duplicate entry
       if (err.code == 11000)
         return res.status(409).json({
-          success: false,
           message: "User validation failed",
           errors: {
             email: {
@@ -149,7 +142,6 @@ function createUser(req, res){
         return res.status(400).send(err);
     }
     res.status(201).json({
-      success: true,
       message: "User created!"
     });
   });
@@ -171,7 +163,6 @@ function createUser(req, res){
  * @apiSuccessExample Success-Response
  *    HTTP/1.1 200 OK
  *    {
- *      success: true,
  *      message:  "User updated!",
  *      user: {
  *        _id: user._id,
@@ -186,7 +177,6 @@ function createUser(req, res){
  * @apiErrorExample Error-Response
  *    HTTP/1.1 400 Bad Request
  *    {
- *      success: false,
  *      errors: {
  *        password: {
  *          message: "Current password is invalid."
@@ -208,7 +198,6 @@ function updateCurrentUser(req, res) {
     var validPassword = user.comparePassword(req.body.password);
     if (!validPassword) {
       return res.status(400).json({
-        success: false,
         message: "User validation failed",
         errors: {
           password: {
@@ -231,7 +220,6 @@ function updateCurrentUser(req, res) {
   user.save(function(err, updatedUser){
     if (err) return res.status(400).send(err);
     res.json({
-      success: true,
       message: "User updated!",
       user: updatedUser.asJson()
     });
@@ -249,7 +237,6 @@ function updateCurrentUser(req, res) {
  * @apiSuccessExample Success-Response
  *    HTTP/1.1 200 OK
  *    {
- *      success: true,
  *      message:  "Account activated."
  *    }
  *
@@ -258,7 +245,6 @@ function updateCurrentUser(req, res) {
  * @apiErrorExample Error-Response
  *    HTTP/1.1 400 Bad Request
  *    {
- *      success: false,
  *      errors: {
  *        user: {
  *          message: "Invalid token."
@@ -272,12 +258,10 @@ function activateAccount(req, res) {
 
     if (user)
         return res.json({
-          success: true,
           message: "Account activated."
         });
     else
       return res.status(400).json({
-        success: false,
         errors: {
           user: {
             message: "Invalid token."
