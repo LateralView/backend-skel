@@ -31,7 +31,7 @@ describe('UsersHandler', function () {
   				.expect('Content-Type', /json/)
   				.expect(401,
   					{
-  						success: false, message: "Login failed",
+  						message: "Login failed",
   						errors: {
   							user:
   								{ message: "Invalid Credentials."  }
@@ -46,7 +46,7 @@ describe('UsersHandler', function () {
   				.expect('Content-Type', /json/)
   				.expect(401,
   					{
-  						success: false, message: "Login failed",
+  						message: "Login failed",
   						errors: {
   							user:
   								{ message: "Invalid Credentials."  }
@@ -61,7 +61,7 @@ describe('UsersHandler', function () {
   				.expect('Content-Type', /json/)
   				.expect(401,
   					{
-  						success: false, message: "Login failed",
+  						message: "Login failed",
   						errors: {
   							user:
   								{ message: "Please activate your account."  }
@@ -78,7 +78,6 @@ describe('UsersHandler', function () {
 	  				.send({ email: validUser.email, password: password })
 	  				.expect('Content-Type', /json/)
 	  				.expect(function(response){
-	  					expect(response.body.success).to.equal(true);
 	  					expect(response.body.token).to.exist;
 	  					expect(response.body.user).to.exist;
 	  					expect(response.body.user.email).to.equal(validUser.email);
@@ -100,7 +99,7 @@ describe('UsersHandler', function () {
   				.expect('Content-Type', /json/)
   				.expect(409,
   					{
-  						success: false, message: "User validation failed",
+  						message: "User validation failed",
   						errors: {
   							email:
   								{ message: "A user with that email already exists."  }
@@ -114,7 +113,6 @@ describe('UsersHandler', function () {
   				.send({ email: "invalidemail", password: 'testtest', firstname: 'James', lastname: 'Doe' })
   				.expect('Content-Type', /json/)
   				.expect(function(response){
-  					expect(response.body.success).to.not.exist;
   					expect(response.body.errors).to.exist;
   				})
   				.expect(400, done);
@@ -128,7 +126,6 @@ describe('UsersHandler', function () {
 	  				.expect('Content-Type', /json/)
 	  				.expect(201,
 	  					{
-	      					success: true,
 	      					message: "User created!"
 	    				}, done);
 	    	});
@@ -152,7 +149,6 @@ describe('UsersHandler', function () {
   				.expect('Content-Type', /json/)
   				.expect(400,
   					{
-						success: false,
 						errors: {
 							user: {
 								message: "Invalid token."
@@ -168,7 +164,6 @@ describe('UsersHandler', function () {
   				.expect('Content-Type', /json/)
   				.expect(200,
 					{
-						success: true,
 						message: "Account activated."
 					}, done);
 	    });
@@ -193,7 +188,6 @@ describe('UsersHandler', function () {
 	    		.put('/api/user')
 	    		.expect('Content-Type', /json/)
   				.expect(403, {
-					success: false,
 					message: "No token provided."
 				}, done);
 	    });
@@ -204,7 +198,6 @@ describe('UsersHandler', function () {
 	    		.set('x-access-token', 'invalidtoken')
 	    		.expect('Content-Type', /json/)
   				.expect(403, {
-					success: false,
 					message: "Failed to authenticate token."
 				}, done);
 	    });
@@ -216,7 +209,6 @@ describe('UsersHandler', function () {
 	    		.send({ password: "invalid", new_password: "newtestpassword" })
 	    		.expect('Content-Type', /json/)
   				.expect(400, {
-					success: false,
 					message: "User validation failed",
 					errors: {
 						password: {
@@ -232,7 +224,6 @@ describe('UsersHandler', function () {
 	    		.send({ firstname: "  " }) // Invalid update
 	    		.expect('Content-Type', /json/)
 	    		.expect(function(response){
-  					expect(response.body.success).to.not.exist;
   					expect(response.body.errors).to.exist;
   				})
   				.expect(400, done);
@@ -257,7 +248,6 @@ describe('UsersHandler', function () {
 	    		.attach('picture', './test/fixtures/invalid-avatar.txt')
 	    		.expect('Content-Type', /json/)
 	    		.expect(function(response){
-  					expect(response.body.success).to.not.exist;
   					expect(response.body.errors).to.exist;
   				})
   				.expect(404)
@@ -275,7 +265,6 @@ describe('UsersHandler', function () {
 	    		.send({ firstname: "Derrick", lastname: "Faulkner" })
 	    		.expect('Content-Type', /json/)
 	    		.expect(function(response){
-  					expect(response.body.success).to.equal(true);
   					expect(response.body.errors).to.not.exist;
   					expect(response.body.user).to.exist;
   					expect(response.body.user.email).to.equal(validUser.email);
@@ -304,7 +293,6 @@ describe('UsersHandler', function () {
 	    		.attach('picture', './test/fixtures/avatar.png')
 	    		.expect('Content-Type', /json/)
 	    		.expect(function(response){
-  					expect(response.body.success).to.equal(true);
   					expect(response.body.user.picture.url).to.exist;
   					validUser.picture = response.body.user.picture;
   				})
@@ -333,7 +321,6 @@ describe('UsersHandler', function () {
 	    		.attach('picture', './test/fixtures/avatar.png')
 	    		.expect('Content-Type', /json/)
 	    		.expect(function(response){
-  					expect(response.body.success).to.equal(true);
   					expect(response.body.user.picture.url).to.exist;
   					expect(response.body.user.picture.url).to.not.equal(validUser.picture.url);
   				})

@@ -7,12 +7,9 @@ angular.module("services")
 			return $http.post(config.api_url + "/users/authenticate", {
 				email: email,
 				password: password
-			})
-				.success(function(data) {
-					if (!data.errors){
-						SessionManager.createSession(data);
-					}
-					return data;
+			}).then(function(response) {
+					SessionManager.createSession(response.data);
+					return response;
 				});
 		};
 
@@ -32,7 +29,7 @@ angular.module("services")
 		// get the user info
 		authFactory.getCurrentUser = function() {
 			var currentUser = JSON.parse(SessionManager.getCurrentUser());
-          	return currentUser;
+			return currentUser;
 		};
 
 		// update the user info

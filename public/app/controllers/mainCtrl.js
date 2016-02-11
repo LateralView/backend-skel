@@ -6,16 +6,15 @@ angular.module("controllers")
     vm.doLogin = function() {
       vm.processing = true;
 
-      Auth.login(vm.loginData.email, vm.loginData.password)
-        .success(function(data){
+      Auth.login(vm.loginData.email, vm.loginData.password).then(function(response){
           vm.processing = false;
+					flash.setMessage("Welcome back, " + vm.loginData.email + "!");
+					$location.path(config.main_path);
 
-          if (!data.errors) {
-            flash.setMessage("Welcome back, " + vm.loginData.email + "!");
-            $location.path(config.main_path);
-          } else
-            flash.setErrors(data);
-        });
+        }, function(response) {
+          vm.processing = false;
+					flash.setErrors(response.data);
+				});
     };
 
     vm.doLogout = function() {

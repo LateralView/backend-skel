@@ -11,7 +11,6 @@ module.exports = function(req, res, next) {
 		jwt.verify(token, secret_token, function(err, decoded){
 			if (err) {
 				return res.status(403).send({
-					success: false,
 					message: "Failed to authenticate token."
 				});
 			} else {
@@ -21,7 +20,6 @@ module.exports = function(req, res, next) {
 					.exec(function(err, user) {
 					if (err || !user) {
 						return res.status(403).send({
-							success: false,
 							message: "Failed to authenticate token."
 						});
 					} else {
@@ -33,7 +31,6 @@ module.exports = function(req, res, next) {
 		})
 	} else {
 		return res.status(403).send({
-			success: false,
 			message: "No token provided."
 		});
 	}

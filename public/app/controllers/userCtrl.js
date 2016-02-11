@@ -6,14 +6,14 @@ angular.module("controllers")
       vm.processing = true;
 
       User.create(vm.userData)
-        .success(function(data) {
+        .then(function(response) {
           vm.processing = false;
-          if (!data.errors) {
-            flash.setMessage("Please check your email and follow the activation instructions.");
-            $location.path("/login");
-          } else
-            flash.setErrors(data);
-        });
+					flash.setMessage("Please check your email and follow the activation instructions.");
+					$location.path("/login");
+        }, function(response) {
+          vm.processing = false;
+					flash.setErrors(response.data);
+				});
     };
   }])
 
@@ -25,20 +25,11 @@ angular.module("controllers")
 
     //form population
     currentUser = Auth.getCurrentUser();
-    /*
-    vm.userData = {};
-    vm.userData.firstname = currentUser.firstname;
-    vm.userData.lastname = currentUser.lastname;
-    */
     vm.userData = currentUser;
     function updateCompleted(data) {
-      vm.processing = false;
-      if (!data.errors) {
-        Auth.updateCurrentUser(data);
-        flash.setMessage(data.message);
-        $location.path(config.main_path);
-      } else
-        flash.setErrors(data);
+			Auth.updateCurrentUser(data);
+			flash.setMessage(data.message);
+			$location.path(config.main_path);
     }
 
     vm.saveUser = function() {
@@ -46,13 +37,22 @@ angular.module("controllers")
       if(vm.uploader.queue.length > 0) {
         vm.uploader.uploadAll();
         vm.uploader.onCompleteItem = function(item, response, status, headers) {
+					vm.processing = false;
           updateCompleted(response);
+        };
+        vm.uploader.onErrorItem = function(item, response, status, headers) {
+					vm.processing = false;
+					flash.setErrors(response);
         };
       }
       else {
-        User.update(vm.userData).success(function(data) {
-          updateCompleted(data);
-        });
+        User.update(vm.userData).then(function(response) {
+					vm.processing = false;
+          updateCompleted(response.data);
+        }, function(response) {
+					vm.processing = false;
+					flash.setErrors(response.data);
+				});
       }
     };
   }])
@@ -61,12 +61,11 @@ angular.module("controllers")
     var vm = this;
     var userData = { activation_token: $routeParams.activation_token }
 
-    User.activateAccount(userData)
-      .success(function(data) {
-        if (!data.errors) {
-          flash.setMessage(data.message);
-        }
-
+    User.activateAccount(userData).then(function(response) {
+				flash.setMessage(response.data.message);
         $location.path("/login");
-      });
+      }, function(response) {
+				flash.setMessage(response.data.errors.user.message, "danger");
+        $location.path("/login");
+			});
   }])
