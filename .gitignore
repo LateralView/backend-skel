@@ -5,3 +5,4 @@ public/app/app.config.js
 public/bower_components
 apidoc
 artifacts
+coverage

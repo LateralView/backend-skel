@@ -6,8 +6,7 @@
   "scripts": {
     "test": "NODE_ENV=test jenkins-mocha --cobertura test",
     "cover": "NODE_ENV=test istanbul cover _mocha",
-    "postinstall": "grunt createConfig && node_modules/bower/bin/bower install",
-    "coveralls": "npm run cover -- --report lcovonly && cat ./coverage/lcov.info | coveralls"
+    "postinstall": "grunt createConfig && node_modules/bower/bin/bower install"
   },
   "repository": {
     "type": "git",
@@ -40,7 +39,6 @@
     "async": "^1.5.0",
     "bower": "^1.6.8",
     "chai": "^3.0.0",
-    "coveralls": "^2.11.6",
     "factory-girl": "^2.2.0",
     "factory-girl-mongoose": "^1.0.0",
     "faker": "^3.0.1",
