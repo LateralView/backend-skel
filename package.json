@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "NODE_ENV=test mocha test",
+    "test": "NODE_ENV=test jenkins-mocha --cobertura test",
     "cover": "NODE_ENV=test istanbul cover _mocha",
     "postinstall": "grunt createConfig && node_modules/bower/bin/bower install",
     "coveralls": "npm run cover -- --report lcovonly && cat ./coverage/lcov.info | coveralls"
@@ -45,6 +45,7 @@
     "factory-girl-mongoose": "^1.0.0",
     "faker": "^3.0.1",
     "istanbul": "^0.4.2",
+    "jenkins-mocha": "^2.5.0",
     "mocha": "^2.2.5",
     "mocha-lcov-reporter": "^1.0.0",
     "mongodb-uri": "^0.9.7",
