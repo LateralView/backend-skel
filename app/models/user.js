@@ -34,6 +34,8 @@ var UserSchema = new Schema({
   created_at: { type: Date, default: Date.now }
 });
 
+UserSchema.plugin(require("./plugins/foregroundIndexesPlugin"));
+
 UserSchema.path('email').validate(function (value) {
   var regex = /^\w+([\+\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   return regex.test(value);
