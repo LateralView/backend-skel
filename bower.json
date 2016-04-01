@@ -12,6 +12,8 @@
     "tests"
   ],
   "dependencies": {
-    "angular-file-upload": "~2.2.0"
+    "angular-file-upload": "~2.2.0",
+    "angular-mocks": "~1.5.3",
+    "jasmine-core": "jasmine#~2.4.1"
   }
 }
