@@ -28,11 +28,11 @@
     "grunt-cli": "0.1.13",
     "grunt-ng-constant": "^1.1.0",
     "jsonwebtoken": "^5.4.1",
-    "mandrill-api": "^1.0.45",
     "matchdep": "^1.0.0",
     "mongoose": "^4.3.7",
     "morgan": "^1.6.1",
     "multer": "^0.1.8",
+    "sendgrid": "^2.0.0",
     "shortid": "^2.2.4"
   },
   "devDependencies": {

@@ -5,7 +5,7 @@ Base skeleton to write apps with the MEAN stack. Developed by the [LateralView](
 [![Build Status](http://jenkins.latview.net/buildStatus/icon?job=Mean Skel)](http://jenkins.latview.net/job/Mean%20Skel/)
 
 
-The app allows user sign-up, account activation, login, logout and profile edition. The activation process uses mail confirmation with the Mandrill library. If you don't set the Mandrill API key, you'll see the activation link in the console.
+The app allows user sign-up, account activation, login, logout and profile edition. The activation process uses mail confirmation with the Sendgrid library. If you don't set the Sendgrid API key, you'll see the activation link in the console.
 
 ```sh
 ...
@@ -25,7 +25,7 @@ $ npm install
 
 ### Configuration
 
-Before running the app, set the database host, base URL, Mandrill API key and S3 keys in the **env.json** file.
+Before running the app, set the database host, base URL, Sendgrid API key and S3 keys in the **env.json** file.
 If S3 keys and/or bucket name are not set no errors will be thrown, but the files will not upload at all (for example in profile picture upload).
 Also, don't forget to run the mongoDB server.
 

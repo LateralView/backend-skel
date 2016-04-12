@@ -19,22 +19,22 @@ describe('mailer Helper', function () {
     });
 
 	it('returns error if delivery fails', function (done) {
-		nock('https://mandrillapp.com:443')
+		nock('https://api.sendgrid.com:443')
 		.post(/.*send*./)
-		.reply(500, {"status":"error","code":-1,"name":"Invalid_Key","message":"Invalid API key"});
+		.reply(400, {"errors":["The provided authorization grant is invalid, expired, or revoked"],"message":"error"});
 
 		mailer.sendActivationEmail(validUser, function(error){
 			nock.cleanAll();
 			expect(error).to.exist;
-			expect(error.message).to.equal('Invalid API key');
+			expect(error.message).to.equal('The provided authorization grant is invalid, expired, or revoked');
 		    done();
 		});
     });
 
     it('do not return error if delivery success', function (done) {
-		nock('https://mandrillapp.com:443')
+		nock('https://api.sendgrid.com:443')
 		.post(/.*send*./)
-		.reply(200, [{"email":"test@test.com","status":"sent","_id":"7d3c08b5b3f742d7b0d52037ea39ec11","reject_reason":null}]);
+		.reply(200, {"message":"success"});
 
 		mailer.sendActivationEmail(validUser, function(error){
 			nock.cleanAll();
@@ -44,7 +44,7 @@ describe('mailer Helper', function () {
     });
 
     it('returns error if request fails', function (done) {
-		nock('https://mandrillapp.com:443')
+		nock('https://api.sendgrid.com:443')
 		.post(/.*send*./)
 		.replyWithError('Some error');
 
