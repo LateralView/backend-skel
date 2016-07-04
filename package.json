@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "NODE_ENV=test jenkins-mocha --cobertura test",
+    "test": "NODE_ENV=test jenkins-mocha --cobertura app/test --recursive --timeout 10000",
     "cover": "NODE_ENV=test istanbul cover _mocha",
     "postinstall": "grunt createConfig && node_modules/bower/bin/bower install"
   },

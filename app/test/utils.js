@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var uriUtil = require('mongodb-uri');
-var config = require('../config').config();
+var config = require('../../config').config();
 var async = require("async");
 
 var factories = require('./factories');

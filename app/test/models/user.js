@@ -1,5 +1,5 @@
 var expect = require('chai').expect,
-    User = require('../../app/models/user'),
+    User = require('../../models/user'),
     factory = require('factory-girl');
 
 describe('User', function () {

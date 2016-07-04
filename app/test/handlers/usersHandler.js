@@ -1,6 +1,6 @@
 var request = require('supertest'),
     factory = require('factory-girl'),
-    User = require('../../app/models/user'),
+    User = require('../../models/user'),
     nock = require('nock'),
     expect = require('chai').expect;
 
@@ -10,7 +10,7 @@ describe('UsersHandler', function () {
 	var server;
 
 	before(function(done){
-		server = require('../../server');
+		server = require('../../../server');
 
     	// Create valid user
     	factory.create("user", {password: password}, function (error, user) {
@@ -245,7 +245,7 @@ describe('UsersHandler', function () {
 	    		.put('/api/user')
 	    		.set('x-access-token', access_token)
 	    		.send({ firstname: "Derrick", lastname: "Faulkner" })
-	    		.attach('picture', './test/fixtures/invalid-avatar.txt')
+	    		.attach('picture', './app/test/fixtures/invalid-avatar.txt')
 	    		.expect('Content-Type', /json/)
 	    		.expect(function(response){
   					expect(response.body.errors).to.exist;
@@ -290,7 +290,7 @@ describe('UsersHandler', function () {
 	    	request(server)
 	    		.put('/api/user')
 	    		.set('x-access-token', access_token)
-	    		.attach('picture', './test/fixtures/avatar.png')
+	    		.attach('picture', './app/test/fixtures/avatar.png')
 	    		.expect('Content-Type', /json/)
 	    		.expect(function(response){
   					expect(response.body.user.picture.url).to.exist;
@@ -318,7 +318,7 @@ describe('UsersHandler', function () {
 	    	request(server)
 	    		.put('/api/user')
 	    		.set('x-access-token', access_token)
-	    		.attach('picture', './test/fixtures/avatar.png')
+	    		.attach('picture', './app/test/fixtures/avatar.png')
 	    		.expect('Content-Type', /json/)
 	    		.expect(function(response){
   					expect(response.body.user.picture.url).to.exist;

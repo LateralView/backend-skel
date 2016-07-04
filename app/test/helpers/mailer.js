@@ -1,7 +1,7 @@
 var nock = require('nock'),
 	expect = require('chai').expect,
 	factory = require('factory-girl'),
-	mailer = require('../../app/helpers/mailer');
+	mailer = require('../../helpers/mailer');
 
 describe('mailer Helper', function () {
 	var validUser = null;

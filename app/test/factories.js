@@ -1,6 +1,6 @@
 var factory = require('factory-girl'),
 	MongooseAdapter = require('factory-girl-mongoose').MongooseAdapter,
-	User = require('../app/models/user'),
+	User = require('../models/user'),
 	faker = require('faker');
 
 factory.setAdapter(MongooseAdapter);

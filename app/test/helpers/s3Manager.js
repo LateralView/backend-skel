@@ -1,7 +1,7 @@
 var nock = require('nock'),
 	expect = require('chai').expect,
 	factory = require('factory-girl'),
-	s3Manager = require('../../app/helpers/s3Manager');
+	s3Manager = require('../../helpers/s3Manager');
 
 describe('s3Manager Helper', function () {
 	var validUser = null;
@@ -35,7 +35,7 @@ describe('s3Manager Helper', function () {
 
 			var file = {
 				name: "avatar.png",
-				path: "./test/fixtures/avatar.png",
+				path: "./app/test/fixtures/avatar.png",
 				mimetype: "image/png"
 			};
 
@@ -86,7 +86,7 @@ describe('s3Manager Helper', function () {
 
 			var file = {
 				name: "avatar.png",
-				path: "./test/fixtures/avatar.png",
+				path: "./app/test/fixtures/avatar.png",
 				mimetype: "image/png"
 			};
 
@@ -105,7 +105,7 @@ describe('s3Manager Helper', function () {
 
 			var file = {
 				name: "avatar.png",
-				path: "./test/fixtures/avatar.png",
+				path: "./app/test/fixtures/avatar.png",
 				mimetype: "image/png"
 			};
 
