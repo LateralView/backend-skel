@@ -3,45 +3,35 @@ angular.module("app.routes", ["ngRoute"])
     $routeProvider
       .when("/home", {
         templateUrl: "app/views/pages/home.html",
-        resolve: {
-            auth: isAuthenticated
-          }
+        authenticate: false
       })
 
       .when("/signup", {
         templateUrl: "app/views/users/new.html",
         controller: "userCreateController",
         controllerAs: "user",
-        resolve: {
-            auth: isAuthenticated
-          }
+        authenticate: false
       })
 
       .when("/login", {
         templateUrl: "app/views/pages/login.html",
         controller: "mainController",
         controllerAs: "login",
-        resolve: {
-            auth: isAuthenticated
-          }
+        authenticate: false
       })
 
       .when("/user", {
         templateUrl: "app/views/users/edit.html",
         controller: "userEditController",
         controllerAs: "user",
-        resolve: {
-            auth: isAuthenticated
-          }
+        authenticate: true
       })
 
       .when("/activate/:activation_token", {
         templateUrl: "app/views/users/activate.html",
         controller: "userActivationController",
         controllerAs: "user",
-        resolve: {
-            auth: isAuthenticated
-          }
+        authenticate: false
       })
 
       .otherwise({
@@ -50,16 +40,3 @@ angular.module("app.routes", ["ngRoute"])
 
     $locationProvider.html5Mode(true);
   }])
-
-  var isAuthenticated = function($q, Auth, $location, config) {
-      var defer = $q.defer();
-      if (!Auth.isLoggedIn()) {
-        if ($location.path().indexOf("signup") < 0 && $location.path().indexOf("activate") < 0)
-            $location.path('/login');
-      } else {
-        if ($location.path().indexOf("login") > -1 || $location.path().indexOf("signup") > -1 || $location.path().indexOf("activate") > -1)
-          $location.path(config.main_path);
-      }
-      defer.resolve();
-      return defer.promise;
-  };
