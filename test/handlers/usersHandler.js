@@ -2,7 +2,8 @@ var request = require('supertest'),
     factory = require('factory-girl'),
     User = require('../../app/models/user'),
     nock = require('nock'),
-    expect = require('chai').expect;
+    expect = require('chai').expect,
+	sinon = require('sinon');
 
 describe('UsersHandler', function () {
 	var validUser = null;
@@ -38,6 +39,32 @@ describe('UsersHandler', function () {
   						}
   					}, done);
 	    });
+	
+		it('responds with error if get error from mongo', function (done) {
+			var mockFindOne = {
+				findOne: function(){
+					return this;
+				},
+				select: function(){
+					return this;
+				},
+				exec: function(callback){
+					callback(new Error('Oops'));
+				}
+			};
+			
+			var stub = sinon.stub(User, 'findOne').returns(mockFindOne);
+			request(server)
+				.post('/api/users/authenticate')
+				.send({ email: 'notregistered@email.com', password: 'testtest' })
+				.expect('Content-Type', /json/)
+				.expect(function(response){
+					stub.restore();
+					expect(response.body.message).to.equal("There was a problem on authenticate user");
+					expect(response.body.error).to.exist;
+				})
+				.expect(400, done);
+		});
 
     	it('responds with error if user password is wrong', function (done) {
 	    	request(server)

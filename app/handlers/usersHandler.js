@@ -43,7 +43,9 @@ function authenticate(req, res){
     .findOne({ email: req.body.email })
     .select("+password +active")
     .exec(function(err, user){
-      if (err) throw err;
+      if (err){
+        return res.status(400).send({message: "There was a problem on authenticate user", error: err})
+      }
       if (!user) {
         res.status(401).json({ message: "Login failed",
               errors: { user: { message: "Invalid Credentials."  } } });
