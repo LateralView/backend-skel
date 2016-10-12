@@ -54,4 +54,14 @@ describe('mailer Helper', function () {
 		    done();
 		});
     });
+	
+	it('Call catch error for wrong parameter', function(done){
+		nock('https://api.sendgrid.com:443')
+			.post(/.*send*./)
+			.reply(200, {"message": "success"});
+		mailer.sendActivationEmail(null, function(error){
+			expect(error).to.exist;
+			done();
+		});
+	});
 });
