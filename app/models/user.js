@@ -70,12 +70,7 @@ UserSchema.pre("save", function(next) {
 UserSchema.pre('save', function(next) {
   var user = this;
 
-  if(user.isNew || !user.isModified("picture")) {
-    return next();
-  }
-
-  // Check if S3 keys are set
-  if(!config.aws.AWS_ACCESS_KEY_ID || !config.aws.AWS_SECRET_ACCESS_KEY || !config.aws.S3_BUCKET_NAME) {
+  if(!user.isModified("picture")) {
     return next();
   }
 
@@ -91,7 +86,7 @@ UserSchema.pre('save', function(next) {
 
 // Send welcome email with activation link
 UserSchema.post("save", function(user) {
-  if (user.wasNew && process.env.NODE_ENV !== 'test') {
+  if (user.wasNew) {
     mailer.sendActivationEmail(user, function(error){
       // TODO: Handle error if exists
     });
@@ -106,14 +101,13 @@ UserSchema.methods.comparePassword = function(password) {
 
 UserSchema.methods.asJson = function() {
   var user = this;
-  response_user = {
-                _id: user._id,
-                email: user.email,
-                firstname: user.firstname,
-                lastname: user.lastname,
-                picture: user.picture
-              }
-  return response_user;
+  return {
+    _id: user._id,
+    email: user.email,
+    firstname: user.firstname,
+    lastname: user.lastname,
+    picture: user.picture
+  };
 };
 
 UserSchema.statics.activateAccount = function(token, callback) {

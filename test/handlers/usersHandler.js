@@ -414,7 +414,7 @@ describe('UsersHandler', function () {
   				.end(function(err, res){
   					nock.cleanAll();
 					done();
-				});;
+				});
 	    });
     });
 
