@@ -256,7 +256,7 @@ function updateCurrentUser(req, res) {
  */
 function activateAccount(req, res) {
   User.activateAccount(req.body.activation_token, function(err, user) {
-    if (err) return res.send(err);
+    if (err) return res.status(400).send(err);
 
     if (user)
         return res.json({

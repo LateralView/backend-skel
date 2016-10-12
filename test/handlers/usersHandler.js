@@ -3,6 +3,7 @@ var request = require('supertest'),
     User = require('../../app/models/user'),
     nock = require('nock'),
     expect = require('chai').expect,
+	async = require('async'),
 	sinon = require('sinon');
 
 describe('UsersHandler', function () {
@@ -183,6 +184,19 @@ describe('UsersHandler', function () {
 						}
 					}, done);
 	    });
+		
+		it('responds with error from activateAccount method', function (done) {
+			var stub = sinon.stub(User, 'activateAccount').yields({message: 'Oops'});
+			request(server)
+				.post('/api/users/activate')
+				.send({ activation_token: 'invalidtoken' })
+				.expect('Content-Type', /json/)
+				.expect(function(response){
+					stub.restore();
+					expect(response.body.message).to.equal('Oops');
+				})
+				.expect(400, done);
+		});
 
 	    it('responds with success if the user was activated', function (done) {
 	    	request(server)
@@ -301,8 +315,53 @@ describe('UsersHandler', function () {
   				})
   				.expect(200, done);
 	    });
-
-	    it('uploads an avatar to user', function (done) {
+	
+		it('responds with success on change password', function (done) {
+			async.waterfall([
+				function(cb){
+					factory.create('user', {password: password}, function(err, user){
+						cb(err, user);
+					});
+				},
+				function (user, cb) {
+					User.activateAccount(user.activation_token, function(err){
+						cb(err, user);
+					});
+				},
+				function(user, cb){
+					request(server)
+						.post('/api/users/authenticate')
+						.send({ email: user.email, password: password })
+						.end(function(err, res){
+							cb(err, user, res.body.token);
+						});
+				}
+			], function(err, user, token){
+				expect(err).to.not.exist;
+				expect(token).to.exist;
+				request(server)
+					.put('/api/user')
+					.set('x-access-token', token)
+					.send({ password: password, new_password: password+'test' })
+					.expect('Content-Type', /json/)
+					.expect(function(response){
+						expect(response.body.errors).to.not.exist;
+						expect(response.body.user).to.exist;
+						expect(response.body.user.email).to.equal(user.email);
+						expect(response.body.user.firstname).to.equal(user.firstname);
+						expect(response.body.user.lastname).to.equal(user.lastname);
+						expect(response.body.user._id).to.equal(String(user._id));
+						User.findOne({_id: user._id}, function(err, user){
+							expect(err).to.not.exist;
+							expect(user.comparePassword(password+'test')).to.equal(true)
+						});
+					})
+					.expect(200, done);
+			})
+			
+		});
+	
+		it('uploads an avatar to user', function (done) {
 	    	// Mock s3 response
 			nock('https://mean-skel.s3.amazonaws.com:443')
 				.put(/.*picture*./)
