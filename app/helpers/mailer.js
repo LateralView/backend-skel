@@ -5,9 +5,6 @@ function sendActivationEmail(user, done) {
 	try {
 		var link = config.base_url + "/activate/" + user.activation_token;
 
-		// TODO: remove this line
-		if (process.env.NODE_ENV !== 'test') console.log("ACTIVATION LINK: " + link);
-
 		var email     = new sendgrid.Email({
 			to:       user.email,
 			from:     'no-reply@meanskel.com',

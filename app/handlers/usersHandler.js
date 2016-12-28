@@ -1,5 +1,6 @@
 var jwt = require("jsonwebtoken"),
   config = require("../../config").config(),
+  errors = require("../helpers/errors"),
   User = require("../models/user");
 
 var secret_token = config.secret;
@@ -25,38 +26,58 @@ var secret_token = config.secret;
  *      }
  *    }
  *
- * @apiError InvalidCredentials Wrong email or password
+ * @apiError LoginInvalidCredentials Invalid credentials
  *
  * @apiErrorExample Error-Response
- *    HTTP/1.1 401 Not Authorized
+ *    HTTP/1.1 401 Unauthorized
  *    {
- *      errors: {
- *        user: {
- *          message: "Invalid Credentials."
- *        }
- *      }
+ *      code: 1000100,
+ *      message: "Invalid credentials.",
+ *      detail: {},
+ *      errors: []
+ *    }
+ *
+ *
+ * @apiError CantAuthenticateUser There was a problem on authenticate user
+ *
+ * @apiErrorExample Error-Response
+ *    HTTP/1.1 400 Bad Request
+ *    {
+ *      code: 1000101,
+ *      message: "There was a problem on authenticate user.",
+ *      detail: {},
+ *      errors: []
+ *    }
+ *
+ * @apiError AccountNotActive Please activate your account
+ *
+ * @apiErrorExample Error-Response
+ *    HTTP/1.1 401 Unauthorized
+ *    {
+ *      code: 1000102,
+ *      message: "Please activate your account.",
+ *      detail: {},
+ *      errors: []
  *    }
  */
-
 function authenticate(req, res){
   User
     .findOne({ email: req.body.email })
     .select("+password +active")
     .exec(function(err, user){
-      if (err) throw err;
+      if (err){
+        return res.status(400).send(errors.newError(errors.errorsEnum.CantAuthenticateUser, err))
+      }
       if (!user) {
-        res.status(401).json({ message: "Login failed",
-              errors: { user: { message: "Invalid Credentials."  } } });
+        res.status(401).json(errors.newError(errors.errorsEnum.LoginInvalidCredentials));
       } else {
         var validPassword = user.comparePassword(req.body.password);
         if (!validPassword) {
-          res.status(401).json({ message: "Login failed",
-              errors: { user: { message: "Invalid Credentials."  } } });
+          res.status(401).json(errors.newError(errors.errorsEnum.LoginInvalidCredentials));
         } else {
           // Check if user is active
           if (!user.active) {
-            res.status(401).json({ message: "Login failed",
-              errors: { user: { message: "Please activate your account."  } } });
+            res.status(401).json(errors.newError(errors.errorsEnum.AccountNotActive));
           } else {
             var token = jwt.sign({
               _id: user._id,
@@ -95,28 +116,28 @@ function authenticate(req, res){
  *      }
  *    }
  *
- * @apiError EmailAlreadyExists The email already exists
  *
- * @apiErrorExample Error-Response
- *    HTTP/1.1 409 Conflict
- *    {
- *      errors: {
- *        email: {
- *          message: "A user with that email already exists."
- *        }
- *      }
- *    }
- *
- * @apiError ValidationError Validation error
+ * @apiError CantCreateUser Can't create new user
  *
  * @apiErrorExample Error-Response
  *    HTTP/1.1 400 Bad Request
  *    {
- *      errors: {
- *        email: {
- *          message: "A user with that email already exists."
- *        }
- *      }
+ *      code: 1000000,
+ *      message: "Can't create new user.",
+ *      detail: {},
+ *      errors: []
+ *    }
+ *
+ *
+ * @apiError UserEmailAlreadyUsed A user with that email already exists
+ *
+ * @apiErrorExample Error-Response
+ *    HTTP/1.1 409 Conflict
+ *    {
+ *      code: 1000001,
+ *      message: "A user with that email already exists.",
+ *      detail: {},
+ *      errors: ['email']
  *    }
  */
 function createUser(req, res){
@@ -128,21 +149,15 @@ function createUser(req, res){
 
   user.save(function(err){
     if (err) {
-      // duplicate entry
       if (err.code === 11000)
-        return res.status(409).json({
-          message: "User validation failed",
-          errors: {
-            email: {
-              message: "A user with that email already exists."
-            }
-          }
-        });
+        return res.status(409).json(errors.newError(errors.errorsEnum.UserEmailAlreadyUsed, err, ['email']));
       else
-        return res.status(400).send(err);
+        return res.status(400).json(errors.newError(errors.errorsEnum.CantCreateUser, err));
     }
+    
     res.status(201).json({
-      message: "User created!"
+      message: "User created!",
+      user: user.asJson()
     });
   });
 }
@@ -172,16 +187,27 @@ function createUser(req, res){
  *      }
  *    }
  *
- * @apiError InvalidPassword Wrong password
+ * @apiError CantEditUser Can't edit user
  *
  * @apiErrorExample Error-Response
  *    HTTP/1.1 400 Bad Request
  *    {
- *      errors: {
- *        password: {
- *          message: "Current password is invalid."
- *        }
- *      }
+ *      code: 1000200,
+ *      message: "Can't edit user.",
+ *      detail: {},
+ *      errors: []
+ *    }
+ *
+ *
+ * @apiError CantEditPassword Current password is invalid
+ *
+ * @apiErrorExample Error-Response
+ *    HTTP/1.1 400 Bad Request
+ *    {
+ *      code: 1000201,
+ *      message: "Current password is invalid.",
+ *      detail: {},
+ *      errors: ['password']
  *    }
  */
 function updateCurrentUser(req, res) {
@@ -197,13 +223,7 @@ function updateCurrentUser(req, res) {
     // Check current password
     var validPassword = user.comparePassword(req.body.password);
     if (!validPassword) {
-      return res.status(400).json({
-        message: "User validation failed",
-        errors: {
-          password: {
-            message: "Current password is invalid." }
-        }
-      });
+      return res.status(400).json(errors.newError(errors.errorsEnum.CantEditPassword, {}, ['password']));
     }
 
     user.password = req.body.new_password;
@@ -218,7 +238,7 @@ function updateCurrentUser(req, res) {
   }
 
   user.save(function(err, updatedUser){
-    if (err) return res.status(400).send(err);
+    if (err) return res.status(400).send(errors.newError(errors.errorsEnum.CantEditUser, err));
     res.json({
       message: "User updated!",
       user: updatedUser.asJson()
@@ -240,34 +260,38 @@ function updateCurrentUser(req, res) {
  *      message:  "Account activated."
  *    }
  *
- * @apiError InvalidToken Invalid activation token
+ * @apiError CantActivateAccount There was a problem at activate account
  *
  * @apiErrorExample Error-Response
  *    HTTP/1.1 400 Bad Request
  *    {
- *      errors: {
- *        user: {
- *          message: "Invalid token."
- *        }
- *      }
+ *      code: 1000300,
+ *      message: "There was a problem at activate account.",
+ *      detail: {},
+ *      errors: []
+ *    }
+ *
+ * @apiError InvalidToken Invalid token
+ *
+ * @apiErrorExample Error-Response
+ *    HTTP/1.1 400 Bad Request
+ *    {
+ *      code: 1000301,
+ *      message: "Invalid token.",
+ *      detail: {},
+ *      errors: ['activation_token']
  *    }
  */
 function activateAccount(req, res) {
   User.activateAccount(req.body.activation_token, function(err, user) {
-    if (err) return res.send(err);
-
-    if (user)
-        return res.json({
-          message: "Account activated."
-        });
-    else
-      return res.status(400).json({
-        errors: {
-          user: {
-            message: "Invalid token."
-          }
-        }
-      });
+    if (err)
+      return res.status(400).send(errors.newError(errors.errorsEnum.CantActivateAccount, err));
+    else if(!user)
+      return res.status(400).json(errors.newError(errors.errorsEnum.InvalidToken, {}, ['activation_token']));
+    
+    res.json({
+      message: "Account activated."
+    });
   });
 }
 

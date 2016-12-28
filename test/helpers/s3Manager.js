@@ -1,6 +1,8 @@
 var nock = require('nock'),
 	expect = require('chai').expect,
 	factory = require('factory-girl'),
+	aws = require('aws-sdk'),
+	sinon = require('sinon'),
 	s3Manager = require('../../app/helpers/s3Manager');
 
 describe('s3Manager Helper', function () {
@@ -115,7 +117,33 @@ describe('s3Manager Helper', function () {
 				done();
 			});
 	    });
-
+    
+        it('returns error if aws sdk throw error', function (done) {
+            nock('https://mean-skel.s3.amazonaws.com:443')
+                .put(/.*picture*./)
+                .replyWithError('Some error');
+        
+            var file = {
+                name: "avatar.png",
+                path: "./test/fixtures/avatar.png",
+                mimetype: "image/png"
+            };
+            
+            var stub = sinon.stub(aws, 'S3', function () {
+				return {
+					upload: function () {
+						throw new Error('Oops');
+                    }
+				}
+            });
+        
+            s3Manager.uploadFile(file, "picture/" + validUser._id, function(err, path) {
+                nock.cleanAll();
+                stub.restore();
+                expect(err).to.exist;
+                done();
+            });
+        });
     });
 
     describe("delete file", function(){
@@ -165,6 +193,33 @@ describe('s3Manager Helper', function () {
 				done();
 			});
 	    });
+    
+        it('returns error if aws sdk throw error', function (done) {
+            nock('https://mean-skel.s3.amazonaws.com:443')
+                .put(/.*picture*./)
+                .replyWithError('Some error');
+        
+            var file = {
+                name: "avatar.png",
+                path: "./test/fixtures/avatar.png",
+                mimetype: "image/png"
+            };
+        
+            var stub = sinon.stub(aws, 'S3', function () {
+                return {
+                    deleteObject: function () {
+                        throw new Error('Oops');
+                    }
+                }
+            });
+        
+            s3Manager.deleteFile("picture/56b0f1d8a60d504834ffe605/avatar.png", function(err, path) {
+                nock.cleanAll();
+                stub.restore();
+                expect(err).to.exist;
+                done();
+            });
+        });
 
     });
 

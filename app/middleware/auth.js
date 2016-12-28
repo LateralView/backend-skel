@@ -1,5 +1,6 @@
 var jwt = require("jsonwebtoken"),
 	config = require("../../config").config(),
+	errors = require("../helpers/errors"),
 	User = require("../models/user");
 
 var secret_token = config.secret;
@@ -10,18 +11,14 @@ module.exports = function(req, res, next) {
 	if (token) {
 		jwt.verify(token, secret_token, function(err, decoded){
 			if (err) {
-				return res.status(403).send({
-					message: "Failed to authenticate token."
-				});
+				return res.status(403).send(errors.newError(errors.errorsEnum.AuthToken, err));
 			} else {
 				// Get user
 				User.findOne({ _id: decoded._id, email: decoded.email, active: true })
 					.select("+password")
 					.exec(function(err, user) {
 					if (err || !user) {
-						return res.status(403).send({
-							message: "Failed to authenticate token."
-						});
+						return res.status(403).send(errors.newError(errors.errorsEnum.AuthToken, err ? err : {}));
 					} else {
 						req.current_user = user;
 						next();
@@ -30,8 +27,6 @@ module.exports = function(req, res, next) {
 			}
 		})
 	} else {
-		return res.status(403).send({
-			message: "No token provided."
-		});
+		return res.status(403).send(errors.newError(errors.errorsEnum.NoTokenProvided));
 	}
 };
