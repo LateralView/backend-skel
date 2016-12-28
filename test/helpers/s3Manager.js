@@ -207,13 +207,13 @@ describe('s3Manager Helper', function () {
         
             var stub = sinon.stub(aws, 'S3', function () {
                 return {
-                    upload: function () {
+                    deleteObject: function () {
                         throw new Error('Oops');
                     }
                 }
             });
         
-            s3Manager.uploadFile(file, "picture/" + validUser._id, function(err, path) {
+            s3Manager.deleteFile("picture/56b0f1d8a60d504834ffe605/avatar.png", function(err, path) {
                 nock.cleanAll();
                 stub.restore();
                 expect(err).to.exist;
