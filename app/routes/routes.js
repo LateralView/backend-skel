@@ -1,34 +1,34 @@
-var express = require("express");
-var token_authentication = require("../middleware/auth");
+const express = require("express");
+const token_authentication = require("../middleware/auth");
+const handlers = require('../handlers');
 
-function setup(app, handlers) {
+class Routes {
 
-// ########## Authentication Route ##########
-  var authenticationRouter = express.Router();
+  constructor() {
+    this.appRoutes = express.Router();
 
-  // Without authentication
-  authenticationRouter.post("/authenticate", handlers.users.authenticate)
+    // ########## Authentication Route ##########
+    this.appRoutes.post('/users/authenticate', handlers.users.authenticate)
 
-  app.use("/api/users", authenticationRouter);
+    // ############## Users Routes ##############
+    // Register new user
+    this.appRoutes.post('/', handlers.users.createUser);
 
-// ########## User Routes ##########
-  var usersRouter = express.Router();
+    // Activate registered user
+    this.appRoutes.post('/activate', handlers.users.activateAccount);
 
-  // Without authentication
-  usersRouter.post("/", handlers.users.createUser);
-  usersRouter.post("/activate", handlers.users.activateAccount);
+    // Update current user
+    this.appRoutes.put('/user', token_authentication, handlers.users.updateCurrentUser);
 
-  app.use("/api/users", usersRouter);
+    // Get users
+    this.appRoutes.get('/users', token_authentication, handlers.users.all);
 
-  var userRouter = express.Router();
-  // With Token authentication
-  userRouter.use(token_authentication);
-  userRouter.put("/", handlers.users.updateCurrentUser)
+    // ########## More Routes ##########
+  }
+  
+  get() {
+    return this.appRoutes;
+  }
+}
 
-  app.use("/api/user", userRouter);
-
-// ########## More Routes ##########
-
-};
-
-exports.setup = setup;
+module.exports = new Routes();

@@ -50,13 +50,8 @@ app.use(attachments.remove);
 // set static files location
 app.use(express.static(path.join(__dirname, "/public")));
 
-// Request Handlers
-const handlers = {
-  users: require('./app/handlers/usersHandler')
-};
-
 // Application routes
-routes.setup(app, handlers);
+app.use('/api', routes.get());
 
 // ---- MAIN CATCHALL ROUTE - SEND USERS TO FRONTEND ----
 app.get("*", (req, res) => {
