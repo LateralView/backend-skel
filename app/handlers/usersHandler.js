@@ -295,6 +295,13 @@ function activateAccount(req, res) {
   });
 }
 
+function all(req, res) {
+  User.find({}, (err, users) => {
+    return res.send(users);
+  });
+}
+
+exports.all = all;
 exports.authenticate = authenticate;
 exports.createUser = createUser;
 exports.updateCurrentUser = updateCurrentUser;
