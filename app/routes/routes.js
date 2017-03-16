@@ -12,7 +12,7 @@ class Routes {
 
     // ############## Users Routes ##############
     // Register new user
-    this.appRoutes.post('/', handlers.users.createUser);
+    this.appRoutes.post('/users', handlers.users.createUser);
 
     // Activate registered user
     this.appRoutes.post('/activate', handlers.users.activateAccount);
