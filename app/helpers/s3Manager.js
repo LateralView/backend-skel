@@ -1,51 +1,55 @@
-var config = require('../../config').config(),
-		aws = require('aws-sdk'),
-		fs = require('fs');
+const config = require('../../config').config();
+const awsSdk = require('aws-sdk');
+const fs = require('fs');
 
-aws.config.update({
-	accessKeyId: config.aws.AWS_ACCESS_KEY_ID,
-	secretAccessKey: config.aws.AWS_SECRET_ACCESS_KEY
-});
+class S3ManagerHelper {
 
-aws.config.region = config.aws.region;
+  constructor() {
+    this.aws = awsSdk;
+    this.aws.config.update({
+      accessKeyId: config.aws.AWS_ACCESS_KEY_ID,
+      secretAccessKey: config.aws.AWS_SECRET_ACCESS_KEY
+    });
 
-function uploadFile(file, path, next) {
-	try {
-		var filePath = path + "/" + file.name;
-		var body = fs.createReadStream(file.path);
+    this.aws.config.region = config.aws.region;
+  }
 
-		// Handle read stream error
-		body.on('error', function(error){ next(error); });
+  uploadFile(file, path, next) {
+    try {
+      let filePath = path + "/" + file.name;
+      let body = fs.createReadStream(file.path);
 
-		var s3obj = new aws.S3({params: {Bucket: config.aws.S3_BUCKET_NAME, Key: filePath}});
-		s3obj.upload({Body: body, ContentType: file.mimetype}).
-		  send(function(err, data) {
-		  	if (err)
-				next(err);
-			else
-				next(null, filePath);
-		  });
-	} catch (err) {
-		next(err);
-	}
+      // Handle read stream error
+      body.on('error', error => next(error));
+
+      let s3obj = new this.aws.S3({params: {Bucket: config.aws.S3_BUCKET_NAME, Key: filePath}});
+      s3obj.upload({Body: body, ContentType: file.mimetype}).
+        send((err, data) => {
+          if (err)
+          next(err);
+        else
+          next(null, filePath);
+        });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  deleteFile(key, next) {
+    try{
+      let s3 = new this.aws.S3();
+      let params = {
+        Bucket: config.aws.S3_BUCKET_NAME,
+        Key: key
+      };
+
+      s3.deleteObject(params, (err, data) => {
+        next(err);
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
-function deleteFile(key, next) {
-	try{
-		var s3 = new aws.S3();
-		var params = {
-		  Bucket: config.aws.S3_BUCKET_NAME,
-		  Key: key
-		};
-
-		s3.deleteObject(params, function(err, data) {
-			next(err);
-		});
-	} catch (err) {
-		next(err);
-	}
-}
-
-exports.uploadFile = uploadFile;
-exports.deleteFile = deleteFile;
-
+module.exports = new S3ManagerHelper();
