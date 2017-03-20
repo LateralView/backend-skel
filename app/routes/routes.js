@@ -15,7 +15,7 @@ class Routes {
     this.appRoutes.post('/users', handlers.users.createUser);
 
     // Activate registered user
-    this.appRoutes.post('/activate', handlers.users.activateAccount);
+    this.appRoutes.post('/users/activate', handlers.users.activateAccount);
 
     // Update current user
     this.appRoutes.put('/user', token_authentication, handlers.users.updateCurrentUser);
