@@ -127,6 +127,4 @@ class User extends mongoose.Schema {
   }
 }
 
-user = new User();
-
 module.exports = mongoose.model('User', new User());
