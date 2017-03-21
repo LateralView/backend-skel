@@ -6,17 +6,17 @@ const expect = require('chai').expect;
 const async = require('async');
 const sinon = require('sinon');
 
-describe('UsersHandler', function () {
-  describe('POST /api/users/authenticate', function () {
-    var validUser = null;
-    var password = "testpassword";
-    var server;
+describe('UsersHandler', () => {
+  describe('POST /api/users/authenticate', () => {
+    let validUser = null;
+    let password = "testpassword";
+    let server;
 
-    before(function(done){
+    before((done) => {
       server = require('../../server');
 
       // Create valid user
-      factory.create("user", {password: password}, function (error, user) {
+      factory.create("user", {password: password}, (error, user) => {
         if (!error)
           validUser = user;
         else
@@ -27,12 +27,12 @@ describe('UsersHandler', function () {
     });
 
 
-    it('responds with error if user does not exist', function (done) {
+    it('responds with error if user does not exist', (done) => {
       request(server)
         .post('/api/users/authenticate')
         .send({ email: 'notregistered@email.com', password: 'testtest' })
         .expect('Content-Type', /json/)
-        .expect(function(response){
+        .expect((response) => {
           expect(response.body.code).to.equal(1000100);
           expect(response.body.message).to.exist;
           expect(response.body.detail).to.exist;
@@ -41,25 +41,25 @@ describe('UsersHandler', function () {
       .expect(401, done);
     });
 
-    it('responds with error if get error from mongo', function (done) {
-      var mockFindOne = {
+    it('responds with error if get error from mongo', (done) => {
+      let mockFindOne = {
         findOne: function(){
           return this;
         },
         select: function(){
           return this;
         },
-        exec: function(callback){
+        exec: (callback) => {
           callback(new Error('Oops'));
         }
       };
 
-      var stub = sinon.stub(User, 'findOne').returns(mockFindOne);
+      let stub = sinon.stub(User, 'findOne').returns(mockFindOne);
       request(server)
         .post('/api/users/authenticate')
         .send({ email: 'notregistered@email.com', password: 'testtest' })
         .expect('Content-Type', /json/)
-        .expect(function(response){
+        .expect((response) => {
           stub.restore();
           nock.cleanAll();
           expect(response.body.code).to.equal(1000101);
@@ -70,12 +70,12 @@ describe('UsersHandler', function () {
       .expect(400, done);
     });
 
-    it('responds with error if user password is wrong', function (done) {
+    it('responds with error if user password is wrong', (done) => {
       request(server)
         .post('/api/users/authenticate')
         .send({ email: validUser.email, password: 'invalid' })
         .expect('Content-Type', /json/)
-        .expect(function(response){
+        .expect((response) => {
           nock.cleanAll();
           expect(response.body.code).to.equal(1000100);
           expect(response.body.message).to.exist;
@@ -85,12 +85,12 @@ describe('UsersHandler', function () {
       .expect(401, done);
     });
 
-    it('responds with error if user is not active', function (done) {
+    it('responds with error if user is not active', (done) => {
       request(server)
         .post('/api/users/authenticate')
         .send({ email: validUser.email, password: password })
         .expect('Content-Type', /json/)
-        .expect(function(response){
+        .expect((response) => {
           nock.cleanAll();
           expect(response.body.code).to.equal(1000102);
           expect(response.body.message).to.exist;
@@ -100,15 +100,15 @@ describe('UsersHandler', function () {
       .expect(401, done);
     });
 
-    it('responds with token and user info if login success', function (done) {
+    it('responds with token and user info if login success', (done) => {
       // Set active flag as true
-      factory.create("user", {password: password, active: true}, function (error, user) {
+      factory.create("user", {password: password, active: true}, (error, user) => {
         expect(error).to.not.exist;
         request(server)
           .post('/api/users/authenticate')
           .send({email: user.email, password: password})
           .expect('Content-Type', /json/)
-          .expect(function (response) {
+          .expect((response) => {
             expect(response.body.token).to.exist;
             expect(response.body.user).to.exist;
             expect(response.body.user.email).to.equal(user.email);
@@ -122,16 +122,16 @@ describe('UsersHandler', function () {
 
   });
 
-  describe('POST /api/users', function () {
-    var validUser = null;
-    var password = "testpassword";
-    var server;
+  describe('POST /api/users', () => {
+    let validUser = null;
+    let password = "testpassword";
+    let server;
 
-    before(function(done){
+    before((done) => {
       server = require('../../server');
 
       // Create valid user
-      factory.create("user", {password: password}, function (error, user) {
+      factory.create("user", {password: password}, (error, user) => {
         if (!error)
           validUser = user;
         else
@@ -142,12 +142,12 @@ describe('UsersHandler', function () {
     });
 
 
-    it('responds with error if email exist', function (done) {
+    it('responds with error if email exist', (done) => {
       request(server)
         .post('/api/users')
         .send({ email: validUser.email, password: 'testtest', firstname: 'James', lastname: 'Doe' })
         .expect('Content-Type', /json/)
-        .expect(function(response){
+        .expect((response) => {
           expect(response.body.code).to.equal(1000001);
           expect(response.body.message).to.exist;
           expect(response.body.detail).to.exist;
@@ -156,12 +156,12 @@ describe('UsersHandler', function () {
       .expect(409, done);
     });
 
-    it('responds with error if some validation fails', function (done) {
+    it('responds with error if some validation fails', (done) => {
       request(server)
         .post('/api/users')
         .send({ email: "invalidemail", password: 'testtest', firstname: 'James', lastname: 'Doe' })
         .expect('Content-Type', /json/)
-        .expect(function(response){
+        .expect((response) => {
           expect(response.body.code).to.equal(1000000);
           expect(response.body.message).to.exist;
           expect(response.body.detail).to.exist;
@@ -170,13 +170,13 @@ describe('UsersHandler', function () {
       .expect(400, done);
     });
 
-    it('responds with success if the user was created', function (done) {
-      var user = factory.build("user", function(error, user){
+    it('responds with success if the user was created', (done) => {
+      let user = factory.build("user", (error, user) => {
         request(server)
           .post('/api/users')
           .send({ email: user.email, password: user.password, firstname: user.firstname, lastname: user.lastname })
           .expect('Content-Type', /json/)
-          .expect(function(response){
+          .expect((response) => {
             expect(response.body.message).to.exist;
             expect(response.body.user).to.exist;
             expect(response.body.user._id).to.exist;
@@ -188,16 +188,16 @@ describe('UsersHandler', function () {
 
   });
 
-  describe('POST /api/users/activate', function () {
-    var validUser = null;
-    var password = "testpassword";
-    var server;
+  describe('POST /api/users/activate', () => {
+    let validUser = null;
+    let password = "testpassword";
+    let server;
 
-    before(function(done){
+    before((done) => {
       server = require('../../server');
 
       // Create valid user
-      factory.create("user", {password: password, active: true}, function (error, user) {
+      factory.create("user", {password: password, active: true}, (error, user) => {
         if (!error)
           validUser = user;
         else
@@ -207,12 +207,12 @@ describe('UsersHandler', function () {
       });
     });
 
-    it('responds with error if token does not exist', function (done) {
+    it('responds with error if token does not exist', (done) => {
       request(server)
         .post('/api/users/activate')
         .send({ activation_token: 'invalidtoken' })
         .expect('Content-Type', /json/)
-        .expect(function(response){
+        .expect((response) => {
           expect(response.body.code).to.equal(1000301);
           expect(response.body.message).to.exist;
           expect(response.body.detail).to.exist;
@@ -221,13 +221,13 @@ describe('UsersHandler', function () {
       .expect(400, done);
     });
 
-    it('responds with error from activateAccount method', function (done) {
-      var stub = sinon.stub(User, 'activateAccount').yields({message: 'Oops'});
+    it('responds with error from activateAccount method', (done) => {
+      let stub = sinon.stub(User, 'activateAccount').yields({message: 'Oops'});
       request(server)
         .post('/api/users/activate')
         .send({ activation_token: 'invalidtoken' })
         .expect('Content-Type', /json/)
-        .expect(function(response){
+        .expect((response) => {
           stub.restore();
           expect(response.body.code).to.equal(1000300);
           expect(response.body.message).to.exist;
@@ -237,8 +237,8 @@ describe('UsersHandler', function () {
       .expect(400, done);
     });
 
-    it('responds with success if the user was activated', function (done) {
-      factory.create("user", {password: password}, function (err, user) {
+    it('responds with success if the user was activated', (done) => {
+      factory.create("user", {password: password}, (err, user) => {
         expect(err).to.not.exist
           request(server)
           .post('/api/users/activate')
@@ -253,17 +253,17 @@ describe('UsersHandler', function () {
 
   });
 
-  describe('PUT /api/user', function () {
-    var access_token;
-    var validUser = null;
-    var password = "testpassword";
-    var server;
+  describe('PUT /api/user', () => {
+    let access_token;
+    let validUser = null;
+    let password = "testpassword";
+    let server;
 
-    before(function(done){
+    before((done) => {
       server = require('../../server');
 
       // Create valid user
-      factory.create("user", {password: password, active: true}, function (error, user) {
+      factory.create("user", {password: password, active: true}, (error, user) => {
         if (!error)
           validUser = user;
         else
@@ -273,18 +273,18 @@ describe('UsersHandler', function () {
         request(server)
           .post('/api/users/authenticate')
           .send({ email: validUser.email, password: password })
-          .end(function(err, res){
+          .end((err, res) => {
             access_token = res.body.token;
             done();
           });
       });
     });
 
-    it('responds with status 403 if token is not present', function (done) {
+    it('responds with status 403 if token is not present', (done) => {
       request(server)
         .put('/api/user')
         .expect('Content-Type', /json/)
-        .expect(function(response){
+        .expect((response) => {
           expect(response.body.code).to.equal(1000401);
           expect(response.body.message).to.exist;
           expect(response.body.detail).to.exist;
@@ -293,12 +293,12 @@ describe('UsersHandler', function () {
       .expect(403, done);
     });
 
-    it('responds with status 403 if token is invalid', function (done) {
+    it('responds with status 403 if token is invalid', (done) => {
       request(server)
         .put('/api/user')
         .set('x-access-token', 'invalidtoken')
         .expect('Content-Type', /json/)
-        .expect(function(response){
+        .expect((response) => {
           expect(response.body.code).to.equal(1000400);
           expect(response.body.message).to.exist;
           expect(response.body.detail).to.exist;
@@ -307,24 +307,24 @@ describe('UsersHandler', function () {
       .expect(403, done);
     });
 
-    it('responds with status 403 if token is valid and cant get current user', function (done) {
-      var mockFindOne = {
+    it('responds with status 403 if token is valid and cant get current user', (done) => {
+      let mockFindOne = {
         findOne: function(){
           return this;
         },
         select: function(){
           return this;
         },
-        exec: function(callback){
+        exec: (callback) => {
           callback(new Error('Oops'));
         }
       };
-      var stub = sinon.stub(User, 'findOne').returns(mockFindOne);
+      let stub = sinon.stub(User, 'findOne').returns(mockFindOne);
       request(server)
         .put('/api/user')
         .set('x-access-token', access_token)
         .expect('Content-Type', /json/)
-        .expect(function(response){
+        .expect((response) => {
           stub.restore();
           expect(response.body.code).to.equal(1000400);
           expect(response.body.message).to.exist;
@@ -334,13 +334,13 @@ describe('UsersHandler', function () {
       .expect(403, done);
     });
 
-    it('responds with error if current password is invalid', function (done) {
+    it('responds with error if current password is invalid', (done) => {
       request(server)
         .put('/api/user')
         .set('x-access-token', access_token)
         .send({ password: "invalid", new_password: "newtestpassword" })
         .expect('Content-Type', /json/)
-        .expect(function(response){
+        .expect((response) => {
           expect(response.body.code).to.equal(1000201);
           expect(response.body.message).to.exist;
           expect(response.body.detail).to.exist;
@@ -349,13 +349,13 @@ describe('UsersHandler', function () {
       .expect(400, done);
     });
 
-    it('responds with error if some validation fails', function (done) {
+    it('responds with error if some validation fails', (done) => {
       request(server)
         .put('/api/user')
         .set('x-access-token', access_token)
         .send({ firstname: "  ", lastname: "  " }) // Invalid update
         .expect('Content-Type', /json/)
-        .expect(function(response){
+        .expect((response) => {
           expect(response.body.code).to.equal(1000200);
           expect(response.body.message).to.exist;
           expect(response.body.detail).to.exist;
@@ -365,7 +365,7 @@ describe('UsersHandler', function () {
       .expect(400, done);
     });
 
-    it('responds with error if file is invalid', function (done) {
+    it('responds with error if file is invalid', (done) => {
       // Mock s3 response
       nock('https://mean-skel.s3.amazonaws.com:443')
         .put(/.*picture*./)
@@ -383,7 +383,7 @@ describe('UsersHandler', function () {
         .send()
         .attach('picture', './test/fixtures/invalid-avatar.txt')
         .expect('Content-Type', /json/)
-        .expect(function(response){
+        .expect((response) => {
           nock.cleanAll();
           expect(response.body.code).to.equal(1000200);
           expect(response.body.message).to.exist;
@@ -394,13 +394,13 @@ describe('UsersHandler', function () {
     });
 
 
-    it('responds with success and user info if the user was updated', function (done) {
+    it('responds with success and user info if the user was updated', (done) => {
       request(server)
         .put('/api/user')
         .set('x-access-token', access_token)
         .send({ firstname: "Derrick", lastname: "Faulkner" })
         .expect('Content-Type', /json/)
-        .expect(function(response){
+        .expect((response) => {
           expect(response.body.errors).to.not.exist;
           expect(response.body.user).to.exist;
           expect(response.body.user.email).to.equal(validUser.email);
@@ -411,27 +411,27 @@ describe('UsersHandler', function () {
       .expect(200, done);
     });
 
-    it('responds with success on change password', function (done) {
+    it('responds with success on change password', (done) => {
       async.waterfall([
-          function(cb){
-            factory.create('user', {password: password}, function(err, user){
+          (cb) => {
+            factory.create('user', {password: password}, (err, user) => {
               cb(err, user);
             });
           },
-          function (user, cb) {
-            User.activateAccount(user.activation_token, function(err){
+          (user, cb) => {
+            User.activateAccount(user.activation_token, (err) => {
               cb(err, user);
             });
           },
-          function(user, cb){
+          (user, cb) => {
             request(server)
               .post('/api/users/authenticate')
               .send({ email: user.email, password: password })
-              .end(function(err, res){
+              .end((err, res) => {
                 cb(err, user, res.body.token);
               });
           }
-      ], function(err, user, token){
+      ], (err, user, token) => {
         expect(err).to.not.exist;
         expect(token).to.exist;
         request(server)
@@ -439,14 +439,14 @@ describe('UsersHandler', function () {
           .set('x-access-token', token)
           .send({ password: password, new_password: password+'test' })
           .expect('Content-Type', /json/)
-          .expect(function(response){
+          .expect((response) => {
             expect(response.body.errors).to.not.exist;
             expect(response.body.user).to.exist;
             expect(response.body.user.email).to.equal(user.email);
             expect(response.body.user.firstname).to.equal(user.firstname);
             expect(response.body.user.lastname).to.equal(user.lastname);
             expect(response.body.user._id).to.equal(String(user._id));
-            User.findOne({_id: user._id}, function(err, user){
+            User.findOne({_id: user._id}, (err, user) => {
               expect(err).to.not.exist;
               expect(user.comparePassword(password+'test')).to.equal(true)
             });
@@ -456,7 +456,7 @@ describe('UsersHandler', function () {
 
     });
 
-    it('uploads an avatar to user', function (done) {
+    it('uploads an avatar to user', (done) => {
       // Mock s3 response
       nock('https://mean-skel.s3.amazonaws.com:443')
         .put(/.*picture*./)
@@ -473,18 +473,18 @@ describe('UsersHandler', function () {
         .set('x-access-token', access_token)
         .attach('picture', './test/fixtures/avatar.png')
         .expect('Content-Type', /json/)
-        .expect(function(response){
+        .expect((response) => {
           expect(response.body.user.picture.url).to.exist;
           validUser.picture = response.body.user.picture;
         })
       .expect(200)
-        .end(function(err, res){
+        .end((err, res) => {
           nock.cleanAll();
           done();
         });
     });
 
-    it('modifies existing avatar', function (done) {
+    it('modifies existing avatar', (done) => {
       // Mock s3 response
       nock('https://mean-skel.s3.amazonaws.com:443')
         .put(/.*picture*./)
@@ -501,12 +501,12 @@ describe('UsersHandler', function () {
         .set('x-access-token', access_token)
         .attach('picture', './test/fixtures/avatar.png')
         .expect('Content-Type', /json/)
-        .expect(function(response){
+        .expect((response) => {
           expect(response.body.user.picture.url).to.exist;
           expect(response.body.user.picture.url).to.not.equal(validUser.picture.url);
         })
       .expect(200)
-        .end(function(err, res){
+        .end((err, res) => {
           nock.cleanAll();
           done();
         });

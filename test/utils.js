@@ -1,26 +1,26 @@
-var mongoose = require('mongoose');
-var uriUtil = require('mongodb-uri');
-var config = require('../config').config();
-var async = require("async");
+const mongoose = require('mongoose');
+const uriUtil = require('mongodb-uri');
+const config = require('../config').config();
+const async = require("async");
 
-var factories = require('./factories');
-var database = (process.env.TEST_DB || config.database);
-var mongooseUri = uriUtil.formatMongoose(database);
+const factories = require('./factories');
+const database = (process.env.TEST_DB || config.database);
+const mongooseUri = uriUtil.formatMongoose(database);
 
-before(function (done) {
+before((done) => {
 
-  function cleanDB() {
+  const cleanDB = () => {
     // Remove all database documents and indexes
-    async.each(mongoose.connection.collections, function(collection, callback) {
+    async.each(mongoose.connection.collections, (collection, callback) => {
       collection.dropIndexes(callback);
-    }, function(err) {
-      async.each(mongoose.connection.models, function(model, callback) {
+    }, (err) => {
+      async.each(mongoose.connection.models, (model, callback) => {
         // Re-generate indexes
         model.ensureIndexes(callback);
-      }, function(err) {
-        async.each(mongoose.connection.collections, function(collection, callback) {
+      }, (err) => {
+        async.each(mongoose.connection.collections, (collection, callback) => {
           collection.remove(callback);
-        }, function(err) {
+        }, (err) => {
           // Register factories
           factories.register();
           // Run tests
@@ -31,13 +31,13 @@ before(function (done) {
   }
 
   // Connect to mongo and clean test database
-  mongoose.connect(mongooseUri, function(result) {
+  mongoose.connect(mongooseUri, (result) => {
     // Clean DB and regenerate indexes
     cleanDB();
   });
 });
 
-after(function (done) {
+after((done) => {
   mongoose.disconnect();
   return done();
 });
