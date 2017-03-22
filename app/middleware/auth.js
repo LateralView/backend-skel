@@ -1,32 +1,39 @@
-var jwt = require("jsonwebtoken"),
-	config = require("../../config").config(),
-	errors = require("../helpers/errors"),
-	User = require("../models/user");
+const jwt = require("jsonwebtoken");
+const	config = require("../../config").config();
+const	errors = require("../helpers/errors");
+const	User = require("../models/user");
 
-var secret_token = config.secret;
+class AuthMiddleware {
+  middleware(req, res, next) {
+    let token = req.headers["x-access-token"];
+    if (token) {
+      jwt.verify(token, config.secret, (err, decoded) => {
+        if (err) {
+          return res.status(403).send(errors.newError(errors.errorsEnum.AuthToken, err));
+        }
+        else {
+          // Get user
+          User.findOne({ _id: decoded._id, email: decoded.email, active: true })
+            .select("+password")
+            .exec((err, user) => {
+            if (err || !user) {
+              return res.status(403).send(errors.newError(errors.errorsEnum.AuthToken, err ? err : {}));
+            }
+            else {
+              req.current_user = user;
+              next();
+            }
+          });
+        }
+      })
+    }
+    else {
+      return res.status(403).send(errors.newError(errors.errorsEnum.NoTokenProvided));
+    }
+  }
+}
+
+authMiddleware = new AuthMiddleware();
+module.exports = authMiddleware.middleware;
 
 // middleware to authenticate routes
-module.exports = function(req, res, next) {
-	var token = req.headers["x-access-token"];
-	if (token) {
-		jwt.verify(token, secret_token, function(err, decoded){
-			if (err) {
-				return res.status(403).send(errors.newError(errors.errorsEnum.AuthToken, err));
-			} else {
-				// Get user
-				User.findOne({ _id: decoded._id, email: decoded.email, active: true })
-					.select("+password")
-					.exec(function(err, user) {
-					if (err || !user) {
-						return res.status(403).send(errors.newError(errors.errorsEnum.AuthToken, err ? err : {}));
-					} else {
-						req.current_user = user;
-						next();
-					}
-				});
-			}
-		})
-	} else {
-		return res.status(403).send(errors.newError(errors.errorsEnum.NoTokenProvided));
-	}
-};

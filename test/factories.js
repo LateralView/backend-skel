@@ -1,16 +1,16 @@
-var factory = require('factory-girl'),
-	MongooseAdapter = require('factory-girl-mongoose').MongooseAdapter,
-	User = require('../app/models/user'),
-	_ = require('lodash'),
-	nock = require('nock'),
-	faker = require('faker');
+const factory = require('factory-girl');
+const MongooseAdapter = require('factory-girl-mongoose').MongooseAdapter;
+const User = require('../app/models/user');
+const _ = require('lodash');
+const nock = require('nock');
+const faker = require('faker');
 
 factory.setAdapter(MongooseAdapter);
 
-var register = function() {
+const register = () => {
 	// User factory
-	factory.define('user', User, function(buildOptions){
-		var attr = {
+	factory.define('user', User, (buildOptions) => {
+		let attr = {
 			email: faker.internet.email() || buildOptions.email,
 			password: faker.internet.password() || buildOptions.password,
 			firstname: faker.name.firstName() || buildOptions.firstname,
@@ -37,7 +37,7 @@ var register = function() {
 		
 		return attr;
 	}, {
-		afterCreate: function(instance, attrs, callback){
+		afterCreate: (instance, attrs, callback) => {
 			nock.cleanAll();
 			callback(null, instance);
 		}

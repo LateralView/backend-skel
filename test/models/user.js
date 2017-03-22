@@ -1,20 +1,20 @@
-var expect = require('chai').expect,
-    User = require('../../app/models/user'),
-    s3Manager = require("../../app/helpers/s3Manager"),
-    sinon = require('sinon'),
-    bcrypt = require("bcrypt-nodejs"),
-    factory = require('factory-girl');
+const expect = require('chai').expect;
+const User = require('../../app/models/user');
+const s3Manager = require("../../app/helpers/s3Manager");
+const sinon = require('sinon');
+const bcrypt = require("bcrypt-nodejs");
+const factory = require('factory-girl');
 
-describe('User', function () {
+describe('User', () => {
 
-  describe('Valid User', function () {
-    var validUser = null;
-    var password = "testpassword";
+  describe('Valid User', () => {
+    let validUser = null;
+    let password = "testpassword";
 
     // Create a user and store it in validUser object
-    before(function(done){
+    before((done) => {
       // Create valid user
-      factory.create("user", {password: password}, function (error, user) {
+      factory.create("user", {password: password}, (error, user) => {
           if (!error)
             validUser = user;
           else
@@ -24,25 +24,25 @@ describe('User', function () {
       });
     });
 
-    it('saves password in an encrypted hash', function (done) {
+    it('saves password in an encrypted hash', (done) => {
     	expect(validUser.password).to.not.equal(null);
     	expect(validUser.password).to.not.equal(password);
     	expect(validUser.comparePassword(password)).to.equal(true);
     	done();
     });
 
-    it('generates an activation token automatically', function (done) {
+    it('generates an activation token automatically', (done) => {
       expect(validUser.activation_token).to.not.equal(null);
       done();
     });
 
-    it('is not active by default', function (done) {
+    it('is not active by default', (done) => {
       expect(validUser.active).to.equal(false);
       done();
     });
 
-    it('activates their account', function (done) {
-      User.activateAccount(validUser.activation_token, function(err, user){
+    it('activates their account', (done) => {
+      User.activateAccount(validUser.activation_token, (err, user) => {
         expect(err).to.not.exist;
         expect(user.active).to.equal(true);
         expect(user.activation_token).to.not.equal(validUser.activation_token);
@@ -52,37 +52,37 @@ describe('User', function () {
 
   });
 
-  describe('Invalid User', function () {
+  describe('Invalid User', () => {
 
-    it('is invalid without email', function (done) {
-      factory.create("user", {email: null}, function (error, user) {
+    it('is invalid without email', (done) => {
+      factory.create("user", {email: null}, (error, user) => {
         expect(error).to.exist;
-        var email_error = error.errors.email;
+        let email_error = error.errors.email;
         expect(email_error.message).to.equal("Email is required.");
         done();
       });
     });
 
-    it('is invalid without firstname', function (done) {
-      factory.create("user", {firstname: null}, function (error, user) {
+    it('is invalid without firstname', (done) => {
+      factory.create("user", {firstname: null}, (error, user) => {
         expect(error).to.exist;
-        var firstname_error = error.errors.firstname;
+        let firstname_error = error.errors.firstname;
         expect(firstname_error.message).to.equal("First name is required.");
         done();
       });
     });
 
-    it('is invalid without lastname', function (done) {
-      factory.create("user", {lastname: null}, function (error, user) {
+    it('is invalid without lastname', (done) => {
+      factory.create("user", {lastname: null}, (error, user) => {
         expect(error).to.exist;
-        var lastname_error = error.errors.lastname;
+        let lastname_error = error.errors.lastname;
         expect(lastname_error.message).to.equal("Last name is required.");
         done();
       });
     });
 
-    it('is invalid without password', function (done) {
-      factory.create("user", {password: null}, function (error, user) {
+    it('is invalid without password', (done) => {
+      factory.create("user", {password: null}, (error, user) => {
         expect(error).to.exist;
         password_error = error.errors.password;
         expect(password_error.message).to.equal("Password is required.");
@@ -90,10 +90,10 @@ describe('User', function () {
       });
     });
 
-    it('is invalid with a taken email', function (done) {
-      factory.create("user", {email: "test@test.com"}, function (error, user) {
+    it('is invalid with a taken email', (done) => {
+      factory.create("user", {email: "test@test.com"}, (error, user) => {
         // Create second user with same email
-        factory.create("user", {email: "test@test.com"}, function (error, user) {
+        factory.create("user", {email: "test@test.com"}, (error, user) => {
           expect(error).to.exist;
           expect(error.code).to.equal(11000); // duplicate entry
           done();
@@ -101,45 +101,45 @@ describe('User', function () {
       });
     });
 
-    it('is invalid with an invalid email', function (done) {
-      factory.create("user", {email: "test"}, function (error, user) {
+    it('is invalid with an invalid email', (done) => {
+      factory.create("user", {email: "test"}, (error, user) => {
         expect(error).to.exist;
-        var email_error = error.errors.email;
+        let email_error = error.errors.email;
         expect(email_error.message).to.equal("Please fill a valid email address.");
         done();
       });
     });
 
-    it('is invalid with a password length less than 8 characters', function (done) {
-      factory.create("user", {password: "1234567"}, function (error, user) {
+    it('is invalid with a password length less than 8 characters', (done) => {
+      factory.create("user", {password: "1234567"}, (error, user) => {
         expect(error).to.exist;
-        var password_error = error.errors.password;
+        let password_error = error.errors.password;
         expect(password_error.message).to.equal("Password is too short.");
         done();
       });
     });
 
-    it('is invalid with a non-image file as picture', function (done) {
-      factory.create("user", { picture: { original_file: { mimetype: "application/zip" } } }, function (error, user) {
+    it('is invalid with a non-image file as picture', (done) => {
+      factory.create("user", { picture: { original_file: { mimetype: "application/zip" } } }, (error, user) => {
         expect(error).to.exist;
-        var image_error = error.errors['picture.original_file.mimetype'];
+        let image_error = error.errors['picture.original_file.mimetype'];
         expect(image_error.message).to.equal("Invalid file.");
         done();
       });
     });
     
-    it('is invalid if cant hash password', function(done){
-      var stub = sinon.stub(bcrypt, 'hash').yields(new Error('Oops'));
-      factory.create("user", function(err, user){
+    it('is invalid if cant hash password', (done) => {
+      let stub = sinon.stub(bcrypt, 'hash').yields(new Error('Oops'));
+      factory.create("user", (err, user) => {
         stub.restore();
         expect(err).to.exist;
         done();
       });
     });
   
-    it('is invalid if has error at upload file', function(done){
-      var stub = sinon.stub(s3Manager, 'uploadFile').yields(new Error('Oops'));
-      factory.create("user", { picture: { original_file: { mimetype: "image/jpeg" } } }, function(err, user){
+    it('is invalid if has error at upload file', (done) => {
+      let stub = sinon.stub(s3Manager, 'uploadFile').yields(new Error('Oops'));
+      factory.create("user", { picture: { original_file: { mimetype: "image/jpeg" } } }, (err, user) => {
         stub.restore();
         expect(err).to.exist;
         done();
