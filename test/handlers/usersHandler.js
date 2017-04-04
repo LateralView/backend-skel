@@ -32,13 +32,14 @@ describe('UsersHandler', () => {
         .post('/api/users/authenticate')
         .send({ email: 'notregistered@email.com', password: 'testtest' })
         .expect('Content-Type', /json/)
-        .expect((response) => {
+        .expect(401)
+        .end((err, response) => {
           expect(response.body.code).to.equal(1000100);
           expect(response.body.message).to.exist;
           expect(response.body.detail).to.exist;
           expect(response.body.errors).to.be.empty;
+          done();
         })
-      .expect(401, done);
     });
 
     it('responds with error if get error from mongo', (done) => {
@@ -59,15 +60,16 @@ describe('UsersHandler', () => {
         .post('/api/users/authenticate')
         .send({ email: 'notregistered@email.com', password: 'testtest' })
         .expect('Content-Type', /json/)
-        .expect((response) => {
+        .expect(400)
+        .end((err, response) => {
           stub.restore();
           nock.cleanAll();
           expect(response.body.code).to.equal(1000101);
           expect(response.body.message).to.exist;
           expect(response.body.detail).to.exist;
           expect(response.body.errors).to.be.empty;
+          done();
         })
-      .expect(400, done);
     });
 
     it('responds with error if user password is wrong', (done) => {
@@ -75,14 +77,15 @@ describe('UsersHandler', () => {
         .post('/api/users/authenticate')
         .send({ email: validUser.email, password: 'invalid' })
         .expect('Content-Type', /json/)
-        .expect((response) => {
+        .expect(401)
+        .end((err, response) => {
           nock.cleanAll();
           expect(response.body.code).to.equal(1000100);
           expect(response.body.message).to.exist;
           expect(response.body.detail).to.exist;
           expect(response.body.errors).to.be.empty;
+          done();
         })
-      .expect(401, done);
     });
 
     it('responds with error if user is not active', (done) => {
@@ -90,14 +93,15 @@ describe('UsersHandler', () => {
         .post('/api/users/authenticate')
         .send({ email: validUser.email, password: password })
         .expect('Content-Type', /json/)
-        .expect((response) => {
+        .expect(401)
+        .end((err, response) => {
           nock.cleanAll();
           expect(response.body.code).to.equal(1000102);
           expect(response.body.message).to.exist;
           expect(response.body.detail).to.exist;
           expect(response.body.errors).to.be.empty;
+          done();
         })
-      .expect(401, done);
     });
 
     it('responds with token and user info if login success', (done) => {
@@ -108,15 +112,16 @@ describe('UsersHandler', () => {
           .post('/api/users/authenticate')
           .send({email: user.email, password: password})
           .expect('Content-Type', /json/)
-          .expect((response) => {
+          .expect(200)
+          .end((err, response) => {
             expect(response.body.token).to.exist;
             expect(response.body.user).to.exist;
             expect(response.body.user.email).to.equal(user.email);
             expect(response.body.user.firstname).to.equal(user.firstname);
             expect(response.body.user.lastname).to.equal(user.lastname);
             expect(response.body.user._id).to.equal(String(user._id));
+            done();
           })
-        .expect(200, done);
       });
     });
 
@@ -147,13 +152,14 @@ describe('UsersHandler', () => {
         .post('/api/users')
         .send({ email: validUser.email, password: 'testtest', firstname: 'James', lastname: 'Doe' })
         .expect('Content-Type', /json/)
-        .expect((response) => {
+        .expect(409)
+        .end((err, response) => {
           expect(response.body.code).to.equal(1000001);
           expect(response.body.message).to.exist;
           expect(response.body.detail).to.exist;
-          expect(response.body.errors).to.contains('email')
+          expect(response.body.errors).to.contains('email');
+          done();
         })
-      .expect(409, done);
     });
 
     it('responds with error if some validation fails', (done) => {
@@ -161,13 +167,14 @@ describe('UsersHandler', () => {
         .post('/api/users')
         .send({ email: "invalidemail", password: 'testtest', firstname: 'James', lastname: 'Doe' })
         .expect('Content-Type', /json/)
-        .expect((response) => {
+        .expect(400)
+        .end((err, response) => {
           expect(response.body.code).to.equal(1000000);
           expect(response.body.message).to.exist;
           expect(response.body.detail).to.exist;
-          expect(response.body.errors).to.contains('email')
+          expect(response.body.errors).to.contains('email');
+          done();
         })
-      .expect(400, done);
     });
 
     it('responds with success if the user was created', (done) => {
@@ -176,13 +183,14 @@ describe('UsersHandler', () => {
           .post('/api/users')
           .send({ email: user.email, password: user.password, firstname: user.firstname, lastname: user.lastname })
           .expect('Content-Type', /json/)
-          .expect((response) => {
+          .expect(201)
+          .end((err, response) => {
             expect(response.body.message).to.exist;
             expect(response.body.user).to.exist;
             expect(response.body.user._id).to.exist;
             expect(response.body.user.email).to.equal(user.email);
+            done();
           })
-        .expect(201, done);
       });
     });
 
@@ -212,13 +220,14 @@ describe('UsersHandler', () => {
         .post('/api/users/activate')
         .send({ activation_token: 'invalidtoken' })
         .expect('Content-Type', /json/)
-        .expect((response) => {
+        .expect(400)
+        .end((err, response) => {
           expect(response.body.code).to.equal(1000301);
           expect(response.body.message).to.exist;
           expect(response.body.detail).to.exist;
-          expect(response.body.errors).to.contains('activation_token')
+          expect(response.body.errors).to.contains('activation_token');
+          done();
         })
-      .expect(400, done);
     });
 
     it('responds with error from activateAccount method', (done) => {
@@ -227,14 +236,15 @@ describe('UsersHandler', () => {
         .post('/api/users/activate')
         .send({ activation_token: 'invalidtoken' })
         .expect('Content-Type', /json/)
-        .expect((response) => {
+        .expect(400)
+        .end((err, response) => {
           stub.restore();
           expect(response.body.code).to.equal(1000300);
           expect(response.body.message).to.exist;
           expect(response.body.detail).to.exist;
           expect(response.body.errors).to.be.empty;
+          done();
         })
-      .expect(400, done);
     });
 
     it('responds with success if the user was activated', (done) => {
@@ -244,10 +254,12 @@ describe('UsersHandler', () => {
           .post('/api/users/activate')
           .send({activation_token: user.activation_token})
           .expect('Content-Type', /json/)
-          .expect(200,
-              {
-                message: "Account activated."
-              }, done);
+          .expect(200)
+          .end((err, response) => {
+            expect(response.body.message).to.exist;
+            expect(response.body.message).to.equal("Account activated.");
+            done();
+          });
       });
     });
 
@@ -284,13 +296,14 @@ describe('UsersHandler', () => {
       request(server)
         .put('/api/user')
         .expect('Content-Type', /json/)
-        .expect((response) => {
+        .expect(403)
+        .end((err, response) => {
           expect(response.body.code).to.equal(1000401);
           expect(response.body.message).to.exist;
           expect(response.body.detail).to.exist;
           expect(response.body.errors).to.be.empty;
+          done();
         })
-      .expect(403, done);
     });
 
     it('responds with status 403 if token is invalid', (done) => {
@@ -298,13 +311,14 @@ describe('UsersHandler', () => {
         .put('/api/user')
         .set('x-access-token', 'invalidtoken')
         .expect('Content-Type', /json/)
-        .expect((response) => {
+        .expect(403)
+        .end((err, response) => {
           expect(response.body.code).to.equal(1000400);
           expect(response.body.message).to.exist;
           expect(response.body.detail).to.exist;
           expect(response.body.errors).to.be.empty;
+          done();
         })
-      .expect(403, done);
     });
 
     it('responds with status 403 if token is valid and cant get current user', (done) => {
@@ -324,14 +338,15 @@ describe('UsersHandler', () => {
         .put('/api/user')
         .set('x-access-token', access_token)
         .expect('Content-Type', /json/)
-        .expect((response) => {
+        .expect(403)
+        .end((err, response) => {
           stub.restore();
           expect(response.body.code).to.equal(1000400);
           expect(response.body.message).to.exist;
           expect(response.body.detail).to.exist;
           expect(response.body.errors).to.be.empty;
+          done();
         })
-      .expect(403, done);
     });
 
     it('responds with error if current password is invalid', (done) => {
@@ -340,13 +355,14 @@ describe('UsersHandler', () => {
         .set('x-access-token', access_token)
         .send({ password: "invalid", new_password: "newtestpassword" })
         .expect('Content-Type', /json/)
-        .expect((response) => {
+        .expect(400)
+        .end((err, response) => {
           expect(response.body.code).to.equal(1000201);
           expect(response.body.message).to.exist;
           expect(response.body.detail).to.exist;
           expect(response.body.errors).to.contains('password')
+          done();
         })
-      .expect(400, done);
     });
 
     it('responds with error if some validation fails', (done) => {
@@ -355,14 +371,15 @@ describe('UsersHandler', () => {
         .set('x-access-token', access_token)
         .send({ firstname: "  ", lastname: "  " }) // Invalid update
         .expect('Content-Type', /json/)
-        .expect((response) => {
+        .expect(400)
+        .end((err, response) => {
           expect(response.body.code).to.equal(1000200);
           expect(response.body.message).to.exist;
           expect(response.body.detail).to.exist;
           expect(response.body.errors).to.contains('firstname');
           expect(response.body.errors).to.contains('lastname');
+          done();
         })
-      .expect(400, done);
     });
 
     it('responds with error if file is invalid', (done) => {
@@ -383,14 +400,15 @@ describe('UsersHandler', () => {
         .send()
         .attach('picture', './test/fixtures/invalid-avatar.txt')
         .expect('Content-Type', /json/)
-        .expect((response) => {
+        .expect(400)
+        .end((err, response) => {
           nock.cleanAll();
           expect(response.body.code).to.equal(1000200);
           expect(response.body.message).to.exist;
           expect(response.body.detail).to.exist;
           expect(response.body.errors).to.contains('picture.original_file.mimetype');
+          done();
         })
-      .expect(400, done);
     });
 
 
@@ -400,15 +418,16 @@ describe('UsersHandler', () => {
         .set('x-access-token', access_token)
         .send({ firstname: "Derrick", lastname: "Faulkner" })
         .expect('Content-Type', /json/)
-        .expect((response) => {
+        .expect(200)
+        .end((err, response) => {
           expect(response.body.errors).to.not.exist;
           expect(response.body.user).to.exist;
           expect(response.body.user.email).to.equal(validUser.email);
           expect(response.body.user.firstname).to.equal("Derrick");
           expect(response.body.user.lastname).to.equal("Faulkner");
           expect(response.body.user._id).to.equal(String(validUser._id));
+          done();
         })
-      .expect(200, done);
     });
 
     it('responds with success on change password', (done) => {
@@ -439,19 +458,20 @@ describe('UsersHandler', () => {
           .set('x-access-token', token)
           .send({ password: password, new_password: password+'test' })
           .expect('Content-Type', /json/)
-          .expect((response) => {
+          .expect(200)
+          .end((err, response) => {
             expect(response.body.errors).to.not.exist;
             expect(response.body.user).to.exist;
             expect(response.body.user.email).to.equal(user.email);
             expect(response.body.user.firstname).to.equal(user.firstname);
             expect(response.body.user.lastname).to.equal(user.lastname);
             expect(response.body.user._id).to.equal(String(user._id));
-            User.findOne({_id: user._id}, (err, user) => {
+            User.findOne({_id: user._id}, "+password", (err, user) => {
               expect(err).to.not.exist;
               expect(user.comparePassword(password+'test')).to.equal(true)
+              done();
             });
           })
-        .expect(200, done);
       })
 
     });
@@ -473,12 +493,10 @@ describe('UsersHandler', () => {
         .set('x-access-token', access_token)
         .attach('picture', './test/fixtures/avatar.png')
         .expect('Content-Type', /json/)
-        .expect((response) => {
+        .expect(200)
+        .end((err, response) => {
           expect(response.body.user.picture.url).to.exist;
           validUser.picture = response.body.user.picture;
-        })
-      .expect(200)
-        .end((err, res) => {
           nock.cleanAll();
           done();
         });
@@ -501,12 +519,10 @@ describe('UsersHandler', () => {
         .set('x-access-token', access_token)
         .attach('picture', './test/fixtures/avatar.png')
         .expect('Content-Type', /json/)
-        .expect((response) => {
+        .expect(200)
+        .end((err, response) => {
           expect(response.body.user.picture.url).to.exist;
           expect(response.body.user.picture.url).to.not.equal(validUser.picture.url);
-        })
-      .expect(200)
-        .end((err, res) => {
           nock.cleanAll();
           done();
         });
