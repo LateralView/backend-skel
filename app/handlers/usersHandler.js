@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-const config = require("../../config").config();
 const errors = require("../helpers/errors");
 const User = require("../models/user");
 
@@ -81,7 +80,7 @@ class UsersHandler {
               let token = jwt.sign({
                 _id: user._id,
                 email: user.email
-              }, config.secret, { expiresIn: 86400 }); // 86400 seconds = 1 day
+              }, process.env.SECRET, { expiresIn: 86400 }); // 86400 seconds = 1 day
               res.json({
                 token:  token,
                 user: user.asJson()

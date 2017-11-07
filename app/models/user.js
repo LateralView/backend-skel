@@ -3,7 +3,6 @@ const Schema = mongoose.Schema;
 const bcrypt = require("bcrypt-nodejs");
 const shortid = require('shortid');
 const mailer = require("../helpers/mailer");
-const config = require("../../config").config();
 const s3Manager = require("../helpers/s3Manager");
 const fs = require("fs");
 
@@ -86,7 +85,7 @@ class User extends mongoose.Schema {
         if (err) return next(err);
 
         this.set("picture.path", path);
-        this.set("picture.url", config.aws.url_base + config.aws.S3_BUCKET_NAME + "/" + path);
+        this.set("picture.url", process.env.AWS_URL_BASE + process.env.AWS_S3_BUCKET_NAME + "/" + path);
         next();
       });
     });

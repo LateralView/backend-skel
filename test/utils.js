@@ -1,10 +1,9 @@
 const mongoose = require('mongoose');
 const uriUtil = require('mongodb-uri');
-const config = require('../config').config();
 const async = require("async");
 
 const factories = require('./factories');
-const database = (process.env.TEST_DB || config.database);
+const database = (process.env.TEST_DB || process.env.DATABASE);
 const mongooseUri = uriUtil.formatMongoose(database);
 
 before((done) => {

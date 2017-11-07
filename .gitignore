@@ -7,3 +7,6 @@ apidoc
 artifacts
 coverage
 .idea
+package-lock.json
+.nyc_output
+.env

@@ -1,10 +1,9 @@
-const config = require('../../config').config();
-const sendgrid = require('sendgrid')(config.sendgrid.API_KEY);
+const sendgrid = require('sendgrid')(process.env.SENDGRID_API_KEY);
 
 class MailerHelper {
   sendActivationEmail(user, done) {
     try {
-      let link = config.base_url + "/activate/" + user.activation_token;
+      let link = process.env.BASE_URL + "/activate/" + user.activation_token;
 
       let email = new sendgrid.Email({
         to:       user.email,

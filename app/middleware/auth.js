@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-const	config = require("../../config").config();
 const	errors = require("../helpers/errors");
 const	User = require("../models/user");
 
@@ -7,7 +6,7 @@ class AuthMiddleware {
   middleware(req, res, next) {
     let token = req.headers["x-access-token"];
     if (token) {
-      jwt.verify(token, config.secret, (err, decoded) => {
+      jwt.verify(token, process.env.SECRET, (err, decoded) => {
         if (err) {
           return res.status(403).send(errors.newError(errors.errorsEnum.AuthToken, err));
         }

@@ -1,4 +1,3 @@
-const config = require('../../config').config();
 const awsSdk = require('aws-sdk');
 const fs = require('fs');
 
@@ -6,11 +5,11 @@ class S3ManagerHelper {
   constructor() {
     this.aws = awsSdk;
     this.aws.config.update({
-      accessKeyId: config.aws.AWS_ACCESS_KEY_ID,
-      secretAccessKey: config.aws.AWS_SECRET_ACCESS_KEY
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
     });
 
-    this.aws.config.region = config.aws.region;
+    this.aws.config.region = process.env.AWS_REGION;
   }
 
   uploadFile(file, path, next) {
@@ -24,7 +23,7 @@ class S3ManagerHelper {
 
     body.on('open', () => {
       try {
-        let s3obj = new this.aws.S3({params: {Bucket: config.aws.S3_BUCKET_NAME, Key: filePath}});
+        let s3obj = new this.aws.S3({params: {Bucket: process.env.AWS_S3_BUCKET_NAME, Key: filePath}});
         s3obj.upload({Body: body, ContentType: file.mimetype}).
           send((err, data) => {
             if (err)
@@ -42,7 +41,7 @@ class S3ManagerHelper {
     try{
       let s3 = new this.aws.S3();
       let params = {
-        Bucket: config.aws.S3_BUCKET_NAME,
+        Bucket: process.env.AWS_S3_BUCKET_NAME,
         Key: key
       };
 
