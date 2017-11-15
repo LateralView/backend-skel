@@ -15,6 +15,8 @@ const path = require("path");
 const routes = require("./app/routes/routes");
 const attachments = require("./app/middleware/attachments");
 
+mongoose.Promise = global.Promise
+
 // ---- APP CONFIGURATION ----
 
 // log all requests to the console
@@ -29,7 +31,7 @@ app.use(multer({ dest: process.env.UPLOADS_DIR }));
 
 // database connection
 if (!mongoose.connection.readyState) {
-  mongoose.connect(process.env.DATABASE);
+  mongoose.connect(process.env.DATABASE, { useMongoClient: true });
   mongoose.set('debug', (!process.env.NODE_ENV || process.env.NODE_ENV === 'development'));
 }
 

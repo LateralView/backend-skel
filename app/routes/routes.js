@@ -25,7 +25,7 @@ class Routes {
 
     // ########## More Routes ##########
   }
-  
+
   get() {
     return this.appRoutes;
   }

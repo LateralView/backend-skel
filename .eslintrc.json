@@ -1,0 +1,34 @@
+{
+  "env": {
+    "es6": true,
+    "node": true,
+    "mocha": true,
+    "commonjs": true
+  },
+  "plugins": [
+    "node",
+    "mocha"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:node/recommended"
+  ],
+  "parserOptions": {
+      "sourceType": "module",
+      "ecmaVersion": 8,
+      "ecmaFeatures": {
+        "arrowFunctions": true,
+        "classes": true,
+        "destructuring": true,
+        "spread": true,
+        "experimentalObjectRestSpread": true
+      }
+  },
+  "rules": {
+    "no-extra-semi": 0,
+    "no-mixed-spaces-and-tabs": 0,
+    "node/no-unpublished-require": 0,
+    "no-useless-escape": 0,
+    "linebreak-style": ["error", "unix"]
+  }
+}

@@ -1,28 +1,57 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
 const bcrypt = require("bcrypt-nodejs");
 const shortid = require('shortid');
 const mailer = require("../helpers/mailer");
 const s3Manager = require("../helpers/s3Manager");
-const fs = require("fs");
-
 
 class User extends mongoose.Schema {
   constructor() {
     super({
-      email: { type: String, trim: true, required: "Email is required.", index: { unique: true }},
-      password: { type: String, required: "Password is required.", select: false, minlength: [8, "Password is too short." ] },
-      firstname: { type: String, trim: true, required: "First name is required."},
-      lastname: { type: String, trim: true, required: "Last name is required."},
-      activation_token: { type: String, select: false, unique: true, 'default': shortid.generate },
-      active: { type: Boolean, default: false, select: false },
+      email: {
+        type: String,
+        trim: true,
+        required: "Email is required.",
+        index: {
+          unique: true
+        }
+      },
+      password: {
+        type: String,
+        required: "Password is required.",
+        select: false,
+        minlength: [8, "Password is too short."]
+      },
+      firstname: {
+        type: String,
+        trim: true,
+        required: "First name is required."
+      },
+      lastname: {
+        type: String,
+        trim: true,
+        required: "Last name is required."
+      },
+      activation_token: {
+        type: String,
+        select: false,
+        unique: true,
+        'default': shortid.generate
+      },
+      active: {
+        type: Boolean,
+        default: false,
+        select: false
+      },
       picture: {
         original_file: {
           fieldname: String,
           originalname: String,
           name: String,
           encoding: String,
-          mimetype: { type: String, default: ''} ,
+          mimetype: {
+            type: String,
+            default: ''
+          },
           path: String,
           extension: String,
           size: Number,
@@ -32,7 +61,10 @@ class User extends mongoose.Schema {
         path: String,
         url: String
       },
-      created_at: { type: Date, default: Date.now }
+      created_at: {
+        type: Date,
+        default: Date.now
+      }
     });
 
     this.plugin(require("./plugins/foregroundIndexesPlugin"));
@@ -44,8 +76,7 @@ class User extends mongoose.Schema {
       if (value) {
         let mimetypes = ["image/jpeg", "image/png"];
         return (mimetypes.indexOf(value) > -1);
-      }
-      else {
+      } else {
         return true;
       }
     }, 'Invalid file.');
@@ -77,7 +108,7 @@ class User extends mongoose.Schema {
 
     // Upload picture to s3
     this.pre('save', function(next) {
-      if(!this.isModified("picture")) {
+      if (!this.isModified("picture")) {
         return next();
       }
 
@@ -94,7 +125,7 @@ class User extends mongoose.Schema {
     // Send welcome email with activation link
     this.post("save", function(user) {
       if (user.wasNew) {
-        mailer.sendActivationEmail(user, function(error){
+        mailer.sendActivationEmail(user, function() {
           // TODO: Handle error if exists
         });
       }
@@ -118,7 +149,16 @@ class User extends mongoose.Schema {
     this.statics.activateAccount = function(token, callback) {
       // Activate account and change token
       let new_token = shortid.generate();
-      this.findOneAndUpdate({ activation_token: token, active: false }, { active: true, activation_token: new_token }, { select: "active", new: true }, (err, user) => {
+      this.findOneAndUpdate({
+        activation_token: token,
+        active: false
+      }, {
+        active: true,
+        activation_token: new_token
+      }, {
+        select: "active",
+        new: true
+      }, (err, user) => {
         callback(err, user);
       });
     };

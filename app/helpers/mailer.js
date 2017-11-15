@@ -6,11 +6,11 @@ class MailerHelper {
       let link = process.env.BASE_URL + "/activate/" + user.activation_token;
 
       let email = new sendgrid.Email({
-        to:       user.email,
-        from:     'no-reply@meanskel.com',
+        to: user.email,
+        from: 'no-reply@meanskel.com',
         fromname: 'MEAN skel',
-        subject:  'Please activate your account!',
-        html:     `
+        subject: 'Please activate your account!',
+        html: `
           <p>Welcome! ${user.email}</p>
           <p>Please follow this link to activate your account</p>
           <p>
@@ -18,14 +18,13 @@ class MailerHelper {
           </p>`
       });
 
-      sendgrid.send(email, (err, json) => {
+      sendgrid.send(email, (err) => {
         if (err)
           done(err);
         else
           done(null);
       });
-    }
-    catch(err) {
+    } catch (err) {
       done(err);
     }
   }

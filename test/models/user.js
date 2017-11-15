@@ -14,21 +14,23 @@ describe('User', () => {
     // Create a user and store it in validUser object
     before((done) => {
       // Create valid user
-      factory.create("user", {password: password}, (error, user) => {
-          if (!error)
-            validUser = user;
-          else
-            throw error;
+      factory.create("user", {
+        password: password
+      }, (error, user) => {
+        if (!error)
+          validUser = user;
+        else
+          throw error;
 
-          done();
+        done();
       });
     });
 
     it('saves password in an encrypted hash', (done) => {
-    	expect(validUser.password).to.not.equal(null);
-    	expect(validUser.password).to.not.equal(password);
-    	expect(validUser.comparePassword(password)).to.equal(true);
-    	done();
+      expect(validUser.password).to.not.equal(null);
+      expect(validUser.password).to.not.equal(password);
+      expect(validUser.comparePassword(password)).to.equal(true);
+      done();
     });
 
     it('generates an activation token automatically', (done) => {
@@ -55,7 +57,9 @@ describe('User', () => {
   describe('Invalid User', () => {
 
     it('is invalid without email', (done) => {
-      factory.create("user", {email: null}, (error, user) => {
+      factory.create("user", {
+        email: null
+      }, error => {
         expect(error).to.exist;
         let email_error = error.errors.email;
         expect(email_error.message).to.equal("Email is required.");
@@ -64,7 +68,9 @@ describe('User', () => {
     });
 
     it('is invalid without firstname', (done) => {
-      factory.create("user", {firstname: null}, (error, user) => {
+      factory.create("user", {
+        firstname: null
+      }, error => {
         expect(error).to.exist;
         let firstname_error = error.errors.firstname;
         expect(firstname_error.message).to.equal("First name is required.");
@@ -73,7 +79,9 @@ describe('User', () => {
     });
 
     it('is invalid without lastname', (done) => {
-      factory.create("user", {lastname: null}, (error, user) => {
+      factory.create("user", {
+        lastname: null
+      }, error => {
         expect(error).to.exist;
         let lastname_error = error.errors.lastname;
         expect(lastname_error.message).to.equal("Last name is required.");
@@ -82,18 +90,24 @@ describe('User', () => {
     });
 
     it('is invalid without password', (done) => {
-      factory.create("user", {password: null}, (error, user) => {
+      factory.create("user", {
+        password: null
+      }, error => {
         expect(error).to.exist;
-        password_error = error.errors.password;
+        const password_error = error.errors.password;
         expect(password_error.message).to.equal("Password is required.");
         done();
       });
     });
 
     it('is invalid with a taken email', (done) => {
-      factory.create("user", {email: "test@test.com"}, (error, user) => {
+      factory.create("user", {
+        email: "test@test.com"
+      }, () => {
         // Create second user with same email
-        factory.create("user", {email: "test@test.com"}, (error, user) => {
+        factory.create("user", {
+          email: "test@test.com"
+        }, error => {
           expect(error).to.exist;
           expect(error.code).to.equal(11000); // duplicate entry
           done();
@@ -102,7 +116,9 @@ describe('User', () => {
     });
 
     it('is invalid with an invalid email', (done) => {
-      factory.create("user", {email: "test"}, (error, user) => {
+      factory.create("user", {
+        email: "test"
+      }, error => {
         expect(error).to.exist;
         let email_error = error.errors.email;
         expect(email_error.message).to.equal("Please fill a valid email address.");
@@ -111,7 +127,9 @@ describe('User', () => {
     });
 
     it('is invalid with a password length less than 8 characters', (done) => {
-      factory.create("user", {password: "1234567"}, (error, user) => {
+      factory.create("user", {
+        password: "1234567"
+      }, error => {
         expect(error).to.exist;
         let password_error = error.errors.password;
         expect(password_error.message).to.equal("Password is too short.");
@@ -120,26 +138,38 @@ describe('User', () => {
     });
 
     it('is invalid with a non-image file as picture', (done) => {
-      factory.create("user", { picture: { original_file: { mimetype: "application/zip" } } }, (error, user) => {
+      factory.create("user", {
+        picture: {
+          original_file: {
+            mimetype: "application/zip"
+          }
+        }
+      }, error => {
         expect(error).to.exist;
         let image_error = error.errors['picture.original_file.mimetype'];
         expect(image_error.message).to.equal("Invalid file.");
         done();
       });
     });
-    
+
     it('is invalid if cant hash password', (done) => {
       let stub = sinon.stub(bcrypt, 'hash').yields(new Error('Oops'));
-      factory.create("user", (err, user) => {
+      factory.create("user", err => {
         stub.restore();
         expect(err).to.exist;
         done();
       });
     });
-  
+
     it('is invalid if has error at upload file', (done) => {
       let stub = sinon.stub(s3Manager, 'uploadFile').yields(new Error('Oops'));
-      factory.create("user", { picture: { original_file: { mimetype: "image/jpeg" } } }, (err, user) => {
+      factory.create("user", {
+        picture: {
+          original_file: {
+            mimetype: "image/jpeg"
+          }
+        }
+      }, err => {
         stub.restore();
         expect(err).to.exist;
         done();

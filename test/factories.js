@@ -1,7 +1,6 @@
 const factory = require('factory-girl');
 const MongooseAdapter = require('factory-girl-mongoose').MongooseAdapter;
 const User = require('../app/models/user');
-const _ = require('lodash');
 const nock = require('nock');
 const faker = require('faker');
 

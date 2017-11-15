@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
-const	errors = require("../helpers/errors");
-const	User = require("../models/user");
+const errors = require("../helpers/errors");
+const User = require("../models/user");
 
 class AuthMiddleware {
   middleware(req, res, next) {
@@ -9,30 +9,31 @@ class AuthMiddleware {
       jwt.verify(token, process.env.SECRET, (err, decoded) => {
         if (err) {
           return res.status(403).send(errors.newError(errors.errorsEnum.AuthToken, err));
-        }
-        else {
+        } else {
           // Get user
-          User.findOne({ _id: decoded._id, email: decoded.email, active: true })
+          User.findOne({
+              _id: decoded._id,
+              email: decoded.email,
+              active: true
+            })
             .select("+password")
             .exec((err, user) => {
-            if (err || !user) {
-              return res.status(403).send(errors.newError(errors.errorsEnum.AuthToken, err ? err : {}));
-            }
-            else {
-              req.current_user = user;
-              next();
-            }
-          });
+              if (err || !user) {
+                return res.status(403).send(errors.newError(errors.errorsEnum.AuthToken, err ? err : {}));
+              } else {
+                req.current_user = user;
+                next();
+              }
+            });
         }
       })
-    }
-    else {
+    } else {
       return res.status(403).send(errors.newError(errors.errorsEnum.NoTokenProvided));
     }
   }
 }
 
-authMiddleware = new AuthMiddleware();
+const authMiddleware = new AuthMiddleware();
 module.exports = authMiddleware.middleware;
 
 // middleware to authenticate routes

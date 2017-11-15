@@ -23,14 +23,22 @@ class S3ManagerHelper {
 
     body.on('open', () => {
       try {
-        let s3obj = new this.aws.S3({params: {Bucket: process.env.AWS_S3_BUCKET_NAME, Key: filePath}});
-        s3obj.upload({Body: body, ContentType: file.mimetype}).
-          send((err, data) => {
-            if (err)
+        let s3obj = new this.aws.S3({
+          params: {
+            Bucket: process.env.AWS_S3_BUCKET_NAME,
+            Key: filePath
+          }
+        });
+        s3obj.upload({
+          Body: body,
+          ContentType: file.mimetype
+        }).
+        send((err) => {
+          if (err)
             next(err);
           else
             next(null, filePath);
-          });
+        });
       } catch (err) {
         next(err);
       }
@@ -38,14 +46,14 @@ class S3ManagerHelper {
   }
 
   deleteFile(key, next) {
-    try{
+    try {
       let s3 = new this.aws.S3();
       let params = {
         Bucket: process.env.AWS_S3_BUCKET_NAME,
         Key: key
       };
 
-      s3.deleteObject(params, (err, data) => {
+      s3.deleteObject(params, (err) => {
         next(err);
       });
     } catch (err) {
