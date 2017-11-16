@@ -1,9 +1,12 @@
+const mongoose = require('mongoose')
 const request = require('supertest');
 const factory = require('factory-girl');
 const User = require('../../app/models/user');
 const nock = require('nock');
 const expect = require('chai').expect;
 const sinon = require('sinon');
+
+require('sinon-as-promised')
 
 describe('UsersHandler', () => {
   describe('POST /api/users/authenticate', () => {
@@ -35,10 +38,8 @@ describe('UsersHandler', () => {
           email: 'notregistered@email.com',
           password: 'testtest'
         })
-        .expect('Content-Type', /json/)
-        .expect(401)
         .end((err, response) => {
-          expect(response.body.code).to.equal(1000100);
+          expect(response.status).to.equal(401);
           expect(response.body.message).to.exist;
           expect(response.body.detail).to.exist;
           expect(response.body.errors).to.be.empty;
@@ -47,19 +48,7 @@ describe('UsersHandler', () => {
     });
 
     it('responds with error if get error from mongo', (done) => {
-      let mockFindOne = {
-        findOne: function() {
-          return this;
-        },
-        select: function() {
-          return this;
-        },
-        exec: (callback) => {
-          callback(new Error('Oops'));
-        }
-      };
-
-      let stub = sinon.stub(User, 'findOne').returns(mockFindOne);
+      let stub = sinon.stub(mongoose.Model, 'findOne').rejects(new Error('Oops'))
       request(server)
         .post('/api/users/authenticate')
         .send({
@@ -75,7 +64,7 @@ describe('UsersHandler', () => {
           expect(response.body.message).to.exist;
           expect(response.body.detail).to.exist;
           expect(response.body.errors).to.be.empty;
-          done();
+          done()
         })
     });
 
@@ -233,8 +222,8 @@ describe('UsersHandler', () => {
   });
 
   describe('POST /api/users/activate', () => {
-    let password = "testpassword";
-    let server;
+    let password = "testpassword"
+    let server
 
     before((done) => {
       server = require('../../server');
@@ -248,8 +237,8 @@ describe('UsersHandler', () => {
           throw error
         }
         done()
-      });
-    });
+      })
+    })
 
     it('responds with error if token does not exist', (done) => {
       request(server)

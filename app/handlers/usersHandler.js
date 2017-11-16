@@ -58,41 +58,37 @@ class UsersHandler {
    *      errors: []
    *    }
    */
-  authenticate(req, res) {
-    User
-      .findOne({
+  async authenticate(req, res) {
+    let user
+    try {
+      user = await User.findOne({
         email: req.body.email
-      })
-      .select("+password +active")
-      .exec((err, user) => {
-        if (err) {
-          return res.status(400).send(errors.newError(errors.errorsEnum.CantAuthenticateUser, err))
-        }
-        if (!user) {
-          res.status(401).json(errors.newError(errors.errorsEnum.LoginInvalidCredentials));
-        } else {
-          let validPassword = user.comparePassword(req.body.password);
-          if (!validPassword) {
-            res.status(401).json(errors.newError(errors.errorsEnum.LoginInvalidCredentials));
-          } else {
-            // Check if user is active
-            if (!user.active) {
-              res.status(401).json(errors.newError(errors.errorsEnum.AccountNotActive));
-            } else {
-              let token = jwt.sign({
-                _id: user._id,
-                email: user.email
-              }, process.env.SECRET, {
-                expiresIn: 86400
-              }); // 86400 seconds = 1 day
-              res.json({
-                token: token,
-                user: user.asJson()
-              });
-            }
-          }
-        }
-      });
+      }, '+password +active')
+    } catch (e) {
+      return res.status(500).json(errors.newError(errors.errorsEnum.CantAuthenticateUser))
+    }
+
+    if (!user) {
+      return res.status(401).json(errors.newError(errors.errorsEnum.LoginInvalidCredentials));
+    }
+    let validPassword = user.comparePassword(req.body.password);
+    if (!validPassword) {
+      return res.status(401).json(errors.newError(errors.errorsEnum.LoginInvalidCredentials));
+    }
+    if (!user.active) {
+      return res.status(401).json(errors.newError(errors.errorsEnum.AccountNotActive));
+    }
+    let token = jwt.sign({
+      _id: user._id,
+      email: user.email
+    }, process.env.SECRET, {
+      expiresIn: 86400
+    }); // 86400 seconds = 1 day
+
+    res.json({
+      token: token,
+      user: user.asJson()
+    })
   }
 
   /**
@@ -142,26 +138,25 @@ class UsersHandler {
    *      errors: ['email']
    *    }
    */
-  createUser(req, res) {
-    let user = new User();
-    user.email = req.body.email;
-    user.password = req.body.password;
-    user.firstname = req.body.firstname;
-    user.lastname = req.body.lastname;
+  async createUser(req, res) {
+    let user = new User()
+    user.email = req.body.email
+    user.password = req.body.password
+    user.firstname = req.body.firstname
+    user.lastname = req.body.lastname
 
-    user.save((err) => {
-      if (err) {
-        if (err.code === 11000)
-          return res.status(409).json(errors.newError(errors.errorsEnum.UserEmailAlreadyUsed, err, ['email']));
-        else
-          return res.status(400).json(errors.newError(errors.errorsEnum.CantCreateUser, err));
-      }
-
+    try {
+      await user.save()
       res.status(201).json({
         message: "User created!",
         user: user.asJson()
-      });
-    });
+      })
+    } catch (err) {
+      if (err.code === 11000)
+        return res.status(409).json(errors.newError(errors.errorsEnum.UserEmailAlreadyUsed, err, ['email']));
+      else
+        return res.status(400).json(errors.newError(errors.errorsEnum.CantCreateUser, err));
+    }
   }
 
   /**
@@ -212,20 +207,20 @@ class UsersHandler {
    *      errors: ['password']
    *    }
    */
-  updateCurrentUser(req, res) {
+  async updateCurrentUser(req, res) {
     let user = req.current_user;
     if (req.files.picture) {
       user.picture = {
         url: null,
         path: null,
         original_file: req.files.picture
-      };
+      }
     }
     if (req.body.password && req.body.new_password) {
       // Check current password
-      let validPassword = user.comparePassword(req.body.password);
+      let validPassword = user.comparePassword(req.body.password)
       if (!validPassword) {
-        return res.status(400).json(errors.newError(errors.errorsEnum.CantEditPassword, {}, ['password']));
+        return res.status(400).json(errors.newError(errors.errorsEnum.CantEditPassword, {}, ['password']))
       }
 
       user.password = req.body.new_password;
@@ -239,13 +234,15 @@ class UsersHandler {
       user.lastname = req.body.lastname
     }
 
-    user.save((err, updatedUser) => {
-      if (err) return res.status(400).send(errors.newError(errors.errorsEnum.CantEditUser, err));
+    try {
+      const updatedUser = await user.save()
       res.json({
         message: "User updated!",
         user: updatedUser.asJson()
-      });
-    });
+      })
+    } catch (err) {
+      res.status(400).send(errors.newError(errors.errorsEnum.CantEditUser, err));
+    }
   }
 
   /**
@@ -284,23 +281,57 @@ class UsersHandler {
    *      errors: ['activation_token']
    *    }
    */
-  activateAccount(req, res) {
-    User.activateAccount(req.body.activation_token, (err, user) => {
-      if (err)
-        return res.status(400).send(errors.newError(errors.errorsEnum.CantActivateAccount, err));
-      else if (!user)
+  async activateAccount(req, res) {
+    try {
+      const user = await User.activateAccount(req.body.activation_token)
+      if (!user) {
         return res.status(400).json(errors.newError(errors.errorsEnum.InvalidToken, {}, ['activation_token']));
-
+      }
       res.json({
         message: "Account activated."
-      });
-    });
+      })
+    } catch (err) {
+      return res.status(400).send(errors.newError(errors.errorsEnum.CantActivateAccount, err));
+    }
   }
 
-  all(req, res) {
-    User.find({}, (err, users) => {
-      return res.send(users);
-    });
+  /**
+   * @api {get} /api/users Get user list
+   * @apiName user_get_list
+   * @apiGroup Users
+   * @apiVersion 0.1.0
+   *
+   * @apiSuccessExample Success-Response
+   *    HTTP/1.1 200 OK
+   *    [
+   *      {
+   *        _id: user._id,
+   *        email: "user@example.com",
+   *        firstname: "John",
+   *        lastname: "Doe"
+   *      },
+   *      {
+   *        _id: user._id,
+   *        email: "user2@example.com",
+   *        firstname: "George",
+   *        lastname: "Smith"
+   *      }
+   *    ]
+   *
+   * @apiError InvalidToken Invalid token
+   *
+   * @apiErrorExample Error-Response
+   *    HTTP/1.1 400 Bad Request
+   *    {
+   *      code: 1000301,
+   *      message: "Invalid token.",
+   *      detail: {},
+   *      errors: ['activation_token']
+   *    }
+   */
+  async all(req, res) {
+    const users = await User.find({})
+    return res.send(users);
   }
 
 }

@@ -146,10 +146,10 @@ class User extends mongoose.Schema {
       }
     }
 
-    this.statics.activateAccount = function(token, callback) {
+    this.statics.activateAccount = function(token) {
       // Activate account and change token
-      let new_token = shortid.generate();
-      this.findOneAndUpdate({
+      let new_token = shortid.generate()
+      return this.findOneAndUpdate({
         activation_token: token,
         active: false
       }, {
@@ -158,10 +158,8 @@ class User extends mongoose.Schema {
       }, {
         select: "active",
         new: true
-      }, (err, user) => {
-        callback(err, user);
-      });
-    };
+      })
+    }
 
   }
 }

@@ -43,14 +43,11 @@ describe('User', () => {
       done();
     });
 
-    it('activates their account', (done) => {
-      User.activateAccount(validUser.activation_token, (err, user) => {
-        expect(err).to.not.exist;
-        expect(user.active).to.equal(true);
-        expect(user.activation_token).to.not.equal(validUser.activation_token);
-        done();
-      });
-    });
+    it('activates their account', async () => {
+      const user = await User.activateAccount(validUser.activation_token)
+      expect(user.active).to.equal(true);
+      expect(user.activation_token).to.not.equal(validUser.activation_token);
+    })
 
   });
 

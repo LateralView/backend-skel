@@ -1,7 +1,7 @@
 require('dotenv').config({ path: `${__dirname}/../.env.test` })
 const mongoose = require('mongoose');
 const uriUtil = require('mongodb-uri');
-const async = require("async");
+const asyncLib = require("async");
 
 const factories = require('./factories');
 const database = (process.env.TEST_DB || process.env.DATABASE);
@@ -11,14 +11,14 @@ before((done) => {
 
   const cleanDB = () => {
     // Remove all database documents and indexes
-    async.each(mongoose.connection.collections, (collection, callback) => {
+    asyncLib.each(mongoose.connection.collections, (collection, callback) => {
       collection.dropIndexes(callback);
     }, () => {
-      async.each(mongoose.connection.models, (model, callback) => {
+      asyncLib.each(mongoose.connection.models, (model, callback) => {
         // Re-generate indexes
         model.ensureIndexes(callback);
       }, () => {
-        async.each(mongoose.connection.collections, (collection, callback) => {
+        asyncLib.each(mongoose.connection.collections, (collection, callback) => {
           collection.remove(callback);
         }, () => {
           // Register factories
