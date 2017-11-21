@@ -1,4 +1,11 @@
-# WBR
+# MEAN skel
+
+Base skeleton to write apps with the MEAN stack. Developed by the [LateralView](https://lateralview.co) team.
+
+[![Build Status](http://jenkins.latview.net/buildStatus/icon?job=Mean Skel)](http://jenkins.latview.net/job/Mean%20Skel/)
+
+
+The app allows user sign-up, account activation, login, logout and profile edition. The activation process uses mail confirmation with the Sendgrid library. If you don't set the Sendgrid API key, you'll see the activation link in the console.
 
 ```sh
 ...
@@ -11,8 +18,8 @@ POST /api/users/ 200 388.902 ms - 27
 ### Installation
 
 ```sh
-$ git clone git@bitbucket.org:agencyea/wbrapi.git
-$ cd wbrapi
+$ git clone git@github.com:LateralView/mean-skel.git
+$ cd mean-skel
 $ npm install
 ```
 
@@ -63,7 +70,7 @@ var register = function() {
 # Directory Structure
 
 ```
-wbrapi
+mean-skel
 │   .gitignore
 │   config.js
 │   env.json
