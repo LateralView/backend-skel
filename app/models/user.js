@@ -66,6 +66,7 @@ class User extends mongoose.Schema {
       role: {
         type: String,
         default: ROLES.DATA_ENTRY,
+        select: false,
         enum: { values: Object.values(ROLES) }
       },
       created_at: {

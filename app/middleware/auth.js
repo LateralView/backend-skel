@@ -13,7 +13,7 @@ module.exports = (...roles) => async (req, res, next) => {
         _id: decoded._id,
         email: decoded.email,
         active: true
-      }, '+password')
+      }, '+password +role')
       req.current_user = user
 
       // check user role

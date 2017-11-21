@@ -4,6 +4,7 @@ const s3Manager = require("../../app/helpers/s3Manager")
 const sinon = require('sinon')
 const bcrypt = require("bcrypt-nodejs")
 const factory = require('factory-girl').factory
+const { ROLES } = require('../../app/models/const/roles')
 
 describe('User', () => {
 
@@ -15,7 +16,7 @@ describe('User', () => {
     before(async () => {
       // Create valid user
       validUser = await factory.create("user", { password })
-    });
+    })
 
     it('saves password in an encrypted hash', (done) => {
       expect(validUser.password).to.not.equal(null);
@@ -38,6 +39,10 @@ describe('User', () => {
       const user = await User.activateAccount(validUser.activation_token)
       expect(user.active).to.equal(true);
       expect(user.activation_token).to.not.equal(validUser.activation_token);
+    })
+
+    it('has default role', async () => {
+      expect(validUser.role).to.equals(ROLES.DATA_ENTRY)
     })
   });
 

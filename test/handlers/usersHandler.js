@@ -316,7 +316,19 @@ describe('UsersHandler', () => {
       expect(response.body.detail).to.exist;
       expect(response.body.errors).to.contains('firstname');
       expect(response.body.errors).to.contains('lastname');
-    });
+    })
+
+    it('does not change the role if the user tries to do so', async () => {
+      const response = await request(server)
+        .put('/api/user')
+        .set('x-access-token', access_token)
+        .send({
+          role: ROLES.ADMIN
+        })
+      expect(response.status).to.equal(200)
+      const updatedUser = await User.findOne({ _id: validUser._id }, '+role')
+      expect(updatedUser.role).to.equal(ROLES.DATA_ENTRY)
+    })
 
     it('responds with error if file is invalid', async () => {
       // Mock s3 response
@@ -468,6 +480,12 @@ describe('UsersHandler', () => {
         .get('/api/users')
         .set('x-access-token', access_token)
       expect(res.status).to.eq(200)
+      res.body.forEach(u => {
+        expect(u.firstname).to.exist
+        expect(u.lastname).to.exist
+        expect(u.email).to.exist
+        expect(u.role).to.not.exist
+      })
     })
 
     it('fails for a non-admin user', async () => {
