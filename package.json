@@ -1,5 +1,5 @@
 {
-  "name": "WBR",
+  "name": "mean-skel",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.org:agencyea/wbrapi.git"
+    "url": "https://github.com/LateralView/mean-skel.git"
   },
   "author": "LateralView",
   "license": "ISC",
   "bugs": {
-    "url": "https://bitbucket.org:agencyea/wbrapi/issues"
+    "url": "https://github.com/LateralView/mean-skel/issues"
   },
-  "homepage": "https://bitbucket.org:agencyea/wbrapi.git",
+  "homepage": "https://github.com/LateralView/mean-skel.git",
   "dependencies": {
     "apidoc": "^0.17.6",
     "aws-sdk": "^2.153.0",
