@@ -41,16 +41,8 @@ app.use('/apidoc', express.static(path.join(__dirname, '/apidoc')));
 // remove attachments when request finishes
 app.use(attachments.remove);
 
-// set static files location
-app.use(express.static(path.join(__dirname, "/public")));
-
 // Application routes
 app.use('/api', routes.get());
-
-// ---- MAIN CATCHALL ROUTE - SEND USERS TO FRONTEND ----
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "/public/app/views/index.html"));
-});
 
 // ---- START SERVER ----
 let port = process.env.PORT || 8085;

@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt-nodejs");
 const shortid = require('shortid');
-const mailer = require("../helpers/mailer");
 const s3Manager = require("../helpers/s3Manager");
+const { ROLES } = require('./const/roles')
+
+mongoose.Promise = global.Promise
 
 class User extends mongoose.Schema {
   constructor() {
@@ -60,6 +62,11 @@ class User extends mongoose.Schema {
         },
         path: String,
         url: String
+      },
+      role: {
+        type: String,
+        default: ROLES.DATA_ENTRY,
+        enum: { values: Object.values(ROLES) }
       },
       created_at: {
         type: Date,
@@ -119,16 +126,6 @@ class User extends mongoose.Schema {
         this.set("picture.url", process.env.AWS_URL_BASE + process.env.AWS_S3_BUCKET_NAME + "/" + path);
         next();
       });
-    });
-
-
-    // Send welcome email with activation link
-    this.post("save", function(user) {
-      if (user.wasNew) {
-        mailer.sendActivationEmail(user, function() {
-          // TODO: Handle error if exists
-        });
-      }
     });
 
     // method to compare a given password with the database hash

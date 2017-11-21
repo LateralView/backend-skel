@@ -55,6 +55,10 @@ class ErrorHelper {
       NoTokenProvided: {
         code: 1000401,
         message: "No token provided."
+      },
+      InvalidRole: {
+        code: 1000402,
+        message: "You don't have permissions to access this resource"
       }
     };
   }

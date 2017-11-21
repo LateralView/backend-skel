@@ -1,5 +1,5 @@
 {
-  "name": "mean-skel",
+  "name": "WBR",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
@@ -13,17 +13,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/LateralView/mean-skel.git"
+    "url": "https://bitbucket.org:agencyea/wbrapi.git"
   },
   "author": "LateralView",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/LateralView/mean-skel/issues"
+    "url": "https://bitbucket.org:agencyea/wbrapi/issues"
   },
-  "homepage": "https://github.com/LateralView/mean-skel.git",
+  "homepage": "https://bitbucket.org:agencyea/wbrapi.git",
   "dependencies": {
     "apidoc": "^0.17.6",
-    "aws-sdk": "^2.28.0",
+    "aws-sdk": "^2.153.0",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.14.1",
     "cors": "^2.8.4",
@@ -32,7 +32,8 @@
     "jsonwebtoken": "^5.7.0",
     "lodash": "^4.16.4",
     "matchdep": "^1.0.0",
-    "mongoose": "^4.3.7",
+    "moment": "^2.19.2",
+    "mongoose": "^4.13.4",
     "morgan": "^1.6.1",
     "multer": "^0.1.8",
     "sendgrid": "^2.0.0",
@@ -41,14 +42,15 @@
   },
   "devDependencies": {
     "async": "^2.6.0",
+    "bluebird": "^3.5.1",
     "bower": "^1.6.8",
     "chai": "^3.0.0",
-    "factory-girl": "^3.2.0-beta",
+    "factory-girl": "^4.3.0",
     "factory-girl-mongoose": "^1.0.0",
     "faker": "^3.0.1",
-    "istanbul": "^0.4.5",
+    "istanbul": "^1.0.0-alpha.2",
     "jenkins-mocha": "^6.0.0",
-    "mocha": "^2.2.5",
+    "mocha": "^3.1.0",
     "mocha-lcov-reporter": "^1.0.0",
     "mongodb-uri": "^0.9.7",
     "nock": "^7.0.2",

@@ -7,7 +7,7 @@ class AttachmentMiddleware {
         if (req.files.hasOwnProperty(fieldname)) {
           let file = req.files[fieldname]
           if (!file.pending) {
-            fs.unlink(file.path);
+            fs.unlinkSync(file.path);
           }
         }
       }

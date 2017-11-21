@@ -1,6 +1,6 @@
 const nock = require('nock');
 const expect = require('chai').expect;
-const factory = require('factory-girl');
+const factory = require('factory-girl').factory
 const aws = require('aws-sdk');
 const sinon = require('sinon');
 const s3Manager = require('../../app/helpers/s3Manager');
@@ -8,19 +8,10 @@ const s3Manager = require('../../app/helpers/s3Manager');
 describe('s3Manager Helper', () => {
   let validUser = null;
 
-  before((done) => {
+  before(async () => {
     // Create user
-    factory.create("user", (error, user) => {
-      if (!error)
-        validUser = user;
-      else
-        throw error;
-
-      done();
-    });
-
-
-  });
+    validUser = await factory.create('user')
+  })
 
   describe("upload file", () => {
     it('returns file path if upload success', (done) => {

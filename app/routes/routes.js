@@ -1,6 +1,7 @@
 const express = require("express");
 const token_authentication = require("../middleware/auth");
 const handlers = require('../handlers');
+const { ROLES } = require('../models/const/roles')
 
 class Routes {
 
@@ -18,12 +19,10 @@ class Routes {
     this.appRoutes.post('/users/activate', handlers.users.activateAccount);
 
     // Update current user
-    this.appRoutes.put('/user', token_authentication, handlers.users.updateCurrentUser);
+    this.appRoutes.put('/user', token_authentication(), handlers.users.updateCurrentUser);
 
     // Get users
-    this.appRoutes.get('/users', token_authentication, handlers.users.all);
-
-    // ########## More Routes ##########
+    this.appRoutes.get('/users', token_authentication(ROLES.ADMIN), handlers.users.all);
   }
 
   get() {

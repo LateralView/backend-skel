@@ -1,9 +1,9 @@
-const expect = require('chai').expect;
-const User = require('../../app/models/user');
-const s3Manager = require("../../app/helpers/s3Manager");
-const sinon = require('sinon');
-const bcrypt = require("bcrypt-nodejs");
-const factory = require('factory-girl');
+const expect = require('chai').expect
+const User = require('../../app/models/user')
+const s3Manager = require("../../app/helpers/s3Manager")
+const sinon = require('sinon')
+const bcrypt = require("bcrypt-nodejs")
+const factory = require('factory-girl').factory
 
 describe('User', () => {
 
@@ -12,18 +12,9 @@ describe('User', () => {
     let password = "testpassword";
 
     // Create a user and store it in validUser object
-    before((done) => {
+    before(async () => {
       // Create valid user
-      factory.create("user", {
-        password: password
-      }, (error, user) => {
-        if (!error)
-          validUser = user;
-        else
-          throw error;
-
-        done();
-      });
+      validUser = await factory.create("user", { password })
     });
 
     it('saves password in an encrypted hash', (done) => {
@@ -48,130 +39,133 @@ describe('User', () => {
       expect(user.active).to.equal(true);
       expect(user.activation_token).to.not.equal(validUser.activation_token);
     })
-
   });
 
   describe('Invalid User', () => {
 
-    it('is invalid without email', (done) => {
-      factory.create("user", {
-        email: null
-      }, error => {
-        expect(error).to.exist;
+    it('is invalid without email', async () => {
+      try {
+        await factory.create("user", { email: null })
+        throw new Error('this should fail')
+      }
+      catch (error) {
         let email_error = error.errors.email;
         expect(email_error.message).to.equal("Email is required.");
-        done();
-      });
-    });
+      }
+    })
 
-    it('is invalid without firstname', (done) => {
-      factory.create("user", {
-        firstname: null
-      }, error => {
-        expect(error).to.exist;
-        let firstname_error = error.errors.firstname;
+    it('is invalid without firstname', async () => {
+      try {
+        await factory.create("user", { firstname: null })
+        throw new Error('this should fail')
+      }
+      catch (error) {
+        let firstname_error = error.errors.firstname
         expect(firstname_error.message).to.equal("First name is required.");
-        done();
-      });
-    });
+      }
+    })
 
-    it('is invalid without lastname', (done) => {
-      factory.create("user", {
-        lastname: null
-      }, error => {
-        expect(error).to.exist;
+    it('is invalid without lastname', async () => {
+      try {
+        await factory.create("user", { lastname: null })
+        throw new Error('this should fail')
+      }
+      catch (error) {
         let lastname_error = error.errors.lastname;
         expect(lastname_error.message).to.equal("Last name is required.");
-        done();
-      });
-    });
+      }
+    })
 
-    it('is invalid without password', (done) => {
-      factory.create("user", {
-        password: null
-      }, error => {
+    it('is invalid without password', async () => {
+      try {
+        await factory.create("user", { password: null })
+        throw new Error('this should fail')
+      }
+      catch (error) {
+        const password_error = error.errors.password
+        expect(password_error.message).to.equal("Password is required.")
+      }
+    })
+
+    it('is invalid with a taken email', async () => {
+      await factory.create('user', { email: 'test@test.com' })
+      try {
+        await factory.create('user', { email: 'test@test.com' })
+        throw new Error('this should fail')
+      }
+      catch (error) {
         expect(error).to.exist;
-        const password_error = error.errors.password;
-        expect(password_error.message).to.equal("Password is required.");
-        done();
-      });
-    });
+        expect(error.code).to.equal(11000); // duplicate entry
+      }
+    })
 
-    it('is invalid with a taken email', (done) => {
-      factory.create("user", {
-        email: "test@test.com"
-      }, () => {
-        // Create second user with same email
-        factory.create("user", {
-          email: "test@test.com"
-        }, error => {
-          expect(error).to.exist;
-          expect(error.code).to.equal(11000); // duplicate entry
-          done();
-        });
-      });
-    });
-
-    it('is invalid with an invalid email', (done) => {
-      factory.create("user", {
-        email: "test"
-      }, error => {
-        expect(error).to.exist;
+    it('is invalid with an invalid email', async () => {
+      try {
+        await factory.create('user', { email: 'test' })
+        throw new Error('this should fail')
+      }
+      catch (error) {
         let email_error = error.errors.email;
         expect(email_error.message).to.equal("Please fill a valid email address.");
-        done();
-      });
-    });
+      }
+    })
 
-    it('is invalid with a password length less than 8 characters', (done) => {
-      factory.create("user", {
-        password: "1234567"
-      }, error => {
-        expect(error).to.exist;
+    it('is invalid with a password length less than 8 characters', async () => {
+      try {
+        await factory.create('user', { password: '1234567' })
+        throw new Error('this should fail')
+      }
+      catch (error) {
         let password_error = error.errors.password;
         expect(password_error.message).to.equal("Password is too short.");
-        done();
-      });
-    });
+      }
+    })
 
-    it('is invalid with a non-image file as picture', (done) => {
-      factory.create("user", {
-        picture: {
-          original_file: {
-            mimetype: "application/zip"
+    it('is invalid with a non-image file as picture', async () => {
+      try {
+        await factory.create('user', {
+          picture: {
+            original_file: {
+              mimetype: "application/zip"
+            }
           }
-        }
-      }, error => {
-        expect(error).to.exist;
+        })
+        throw new Error('this should fail')
+      }
+      catch (error) {
         let image_error = error.errors['picture.original_file.mimetype'];
         expect(image_error.message).to.equal("Invalid file.");
-        done();
-      });
-    });
+      }
+    })
 
-    it('is invalid if cant hash password', (done) => {
+    it('is invalid if cant hash password', async () => {
       let stub = sinon.stub(bcrypt, 'hash').yields(new Error('Oops'));
-      factory.create("user", err => {
+      try {
+        await factory.create('user')
+        throw new Error('this should fail')
+      }
+      catch (error) {
         stub.restore();
-        expect(err).to.exist;
-        done();
-      });
-    });
+        expect(error).to.exist;
+      }
+    })
 
-    it('is invalid if has error at upload file', (done) => {
+    it('is invalid if has error at upload file', async () => {
       let stub = sinon.stub(s3Manager, 'uploadFile').yields(new Error('Oops'));
-      factory.create("user", {
-        picture: {
-          original_file: {
-            mimetype: "image/jpeg"
+      try {
+        await factory.create('user', {
+          picture: {
+            original_file: {
+              mimetype: "image/jpeg"
+            }
           }
-        }
-      }, err => {
+        })
+        throw new Error('this should fail')
+      }
+      catch (error) {
         stub.restore();
-        expect(err).to.exist;
-        done();
-      });
-    });
-  });
-
-});
+        expect(error).to.exist
+      }
+    })
+  })
+})
