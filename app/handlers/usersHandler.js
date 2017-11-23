@@ -208,7 +208,7 @@ class UsersHandler {
    *    }
    */
   async updateCurrentUser(req, res) {
-    let user = req.current_user;
+    let user = req.current_user
     if (req.files.picture) {
       user.picture = {
         url: null,
@@ -220,7 +220,11 @@ class UsersHandler {
       // Check current password
       let validPassword = user.comparePassword(req.body.password)
       if (!validPassword) {
-        return res.status(400).json(errors.newError(errors.errorsEnum.CantEditPassword, {}, ['password']))
+        return res.status(400).json(errors.newError(
+          errors.errorsEnum.CantEditPassword,
+          {},
+          ['password']
+        ))
       }
 
       user.password = req.body.new_password;
@@ -241,7 +245,7 @@ class UsersHandler {
         user: updatedUser.asJson()
       })
     } catch (err) {
-      res.status(400).send(errors.newError(errors.errorsEnum.CantEditUser, err));
+      return res.status(400).send(errors.newError(errors.errorsEnum.CantEditUser, err));
     }
   }
 

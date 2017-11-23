@@ -1,22 +1,15 @@
 const nock = require('nock');
 const expect = require('chai').expect;
-const factory = require('factory-girl');
+const factory = require('factory-girl').factory
 const mailer = require('../../app/helpers/mailer');
 
 describe('mailer Helper', () => {
   let validUser = null;
 
-  before((done) => {
+  before(async () => {
     // Create user
-    factory.create("user", (error, user) => {
-      if (!error)
-        validUser = user;
-      else
-        throw error;
-
-      done();
-    });
-  });
+    validUser = await factory.create("user")
+  })
 
   it('returns error if delivery fails', (done) => {
     nock('https://api.sendgrid.com:443')
