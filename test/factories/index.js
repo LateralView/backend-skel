@@ -4,7 +4,9 @@ const factory = factoryGirl.factory
 factory.setAdapter(new factoryGirl.MongooseAdapter())
 
 const userFactory = require('./userFactory')
+const productFactory = require('./productFactory')
 
 module.exports = () => {
   if (!_.has(factory, 'factories.user')) userFactory(factory)
+  if (!_.has(factory, 'factories.product')) productFactory(factory)
 }
