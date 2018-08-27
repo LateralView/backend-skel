@@ -69,12 +69,12 @@ var register = function() {
 ```
 backend-skel
 │   .gitignore
-│   config.js
-│   env.json
 │   gruntfile.js
 │   package.json
 │   README.md
 │   server.js
+|   .env
+|   .env.test
 │
 └───app
     │   ...
@@ -91,7 +91,8 @@ backend-skel
 * **App Folder** -> Backend logic.
 * **Test Folder** -> Unit Tests.
 * **Apidoc Folder** -> Auto-generated API documentation.
-* **env.json** -> Backend configuration depending on the environment.
+* **.env** -> Backend configuration depending on the environment (ouside the repo, you must create the file).
+* **.env.test** -> Environment variables for tests.
 * **gruntfile.js** -> Grunt configuration. Run tasks and create config files depending on the environment.
 * **server.js** -> Express server.
 
