@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "NODE_ENV=test nyc --reporter=text --reporter=lcov mocha --timeout=10000",
-    "postinstall": "apidoc -e \"(node_modules|public)\" -o public/apidoc"
+    "postinstall": "apidoc -e \"(node_modules|public)\" -o apidoc"
   },
   "engines": {
     "node": ">=8.2.0"
